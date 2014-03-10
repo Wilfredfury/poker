@@ -1,7 +1,9 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
+		<!-- socket.io pro komunikaci -->
 		<script src="socket.io/socket.io.js"></script>
+		<!-- cesta k js souborum z ./client . cely adresar client je pridan na serveru -->
 		<script src="jquery-1.7.1.min.js"></script>
 		<script src="client.js"></script>	
 	</head>
@@ -12,6 +14,7 @@
 	<script type="text/javascript">
 		var app = new traineeApp.Core();
 		$(document).ready( function(){
+			// inicializace hlidani kliku na button
 			app.initListeners.call( app );			
 		});
 	</script>
