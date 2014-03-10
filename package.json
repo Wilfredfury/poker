@@ -1,0 +1,14 @@
+{
+  "name": "sbksplanningpoker",
+  "version": "0.0.0",
+  "description": "plannig poker app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "techbakers trainee program",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "express.io": "~1.1.13"
+  }
+}

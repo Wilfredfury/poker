@@ -1,0 +1,7 @@
+responseDivClass = 'someClass'
+usersList = {}
+
+exports.getDivResponse = function( userId ) {
+	usersList[userId] = 'developer';
+	return '<div class="' + responseDivClass +'">user: <strong>' + userId + '</strong></div>';
+}
