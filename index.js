@@ -17,11 +17,11 @@ app.io.route( 'first_request', function(req){
 		req.session.user = req.data.mail;
 	}
 	// ukazka vystupu do console
-	console.log( server.getDivResponse( req.session.user ) );
+	console.log( server.getResponse( req.session.user ) );
 	// vypis aktualnich uzivatelu
 	console.log( server.usersList );
 	// vraceni odpovedi na clienta
-	req.io.emit('first_response', {div: server.getDivResponse( req.session.user )});	
+	req.io.emit('first_response', server.getResponse( req.session.user ) );	
 });
 
 // spusteni aplikace na portu 4987
