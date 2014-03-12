@@ -1,7 +1,9 @@
 // express.io umoznujici komunikaci pres sockety
 express = require('express.io');
-// ukazkovy soubor s js pro server
+
 server = require('./server/main.js');
+data = require('./server/data.js');
+
 
 app = express();
 app.http().io();
@@ -16,6 +18,9 @@ app.io.route( 'first_request', function(req){
 	if ( req.session.user == null ) {
 		req.session.user = req.data.mail;
 	}
+
+  console.log(req.data.mail);
+
 	// ukazka vystupu do console
 	console.log( server.getDivResponse( req.session.user ) );
 	// vypis aktualnich uzivatelu
