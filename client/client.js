@@ -8,7 +8,7 @@ traineeApp.Core = function() {
   this.responseEl = $('#response-wrapper');
   this.io = io.connect();
   // vygenerovani nicku tzn kazdy instance=tab ma sve idcko
-  this.nick = 'user' + Math.floor((Math.random()*1000)+1).toString(); 
+  this.nick = 'user' + Math.floor((Math.random()*1000)+1).toString();
 };
 
 traineeApp.Core.prototype.initListeners = function(){
@@ -28,4 +28,3 @@ traineeApp.Core.prototype.initListeners = function(){
 var functionCallAbleFromEverywhere = function () {
   console.log( 'yep' );
 }
-
