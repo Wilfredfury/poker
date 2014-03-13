@@ -2,8 +2,14 @@
  * Created by balicekt on 12/03/14.
  */
 
-exports.users = function (){
+exports.users = function () {
   var users = [
+    {
+      name: "test test",
+      team: "masterA",
+      email: "test@test.cz",
+      role: "developer"
+    },
     {
       name: "Tomas Balicek",
       team: "masterA",
@@ -28,7 +34,7 @@ exports.users = function (){
 };
 
 
-exports.userStories = function() {
+exports.userStories = function () {
   var userStories = [
     {
       name: 'user story 1',
@@ -47,4 +53,21 @@ exports.userStories = function() {
   return userStories;
 }
 
+
+exports.isRegistred = function (email) {
+  var users = exports.users();
+  for (var key in users) {
+    if (users[key].email === email)
+      return {success: true, data: users[key]};
+  }
+  return {success: false};
+}
+
+exports.getRole = function (email){
+  var users = exports.users();
+  for (var key in users) {
+    if (users[key].email === email)
+      return users[key].role;
+  }
+}
 
