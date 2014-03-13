@@ -6,8 +6,8 @@ var traineeApp = {};
 traineeApp.Core = function() {
   this.formEl = $('#login-form');
   this.emailEl = $('#login-email');
-  this.responseEl = $('#response-wrapper');
   this.io = io.connect();
+  this.user = {};
   // vygenerovani nicku tzn kazdy instance=tab ma sve idcko
   //this.nick = 'user' + Math.floor((Math.random()*1000)+1).toString();
 };
@@ -15,19 +15,25 @@ traineeApp.Core = function() {
 traineeApp.Core.prototype.initListeners = function(){
   // _this mi drzi scope traineeApp.Core
   var _this = this;
+  var email = "";
   // po clicknuti na button posilam request na backend
   this.formEl.submit( function(event){
     event.preventDefault();
-    var email = _this.emailEl.val();
-    _this.io.emit('first_request', {mail: email});
+    email = _this.emailEl.val();
+    _this.io.emit('login-request', {mail: email});
   });
   // hlidani odpovedi ze serveru a zmena html
-  this.io.on('first_response', function(data) {
-    divEl = $('<div class="' + data['class'] + '">' + data['userId'] + '</div>')
-    _this.responseEl.append( divEl );
+  this.io.on('login-response', function(data) {
+    if(data.success){
+      _this.user = new user(data.data);
+      alert(JSON.stringify(_this.user));
+    }
+    else
+      alert("nejsi prihlasen");
   });
 };
 
 var functionCallAbleFromEverywhere = function () {
   console.log( 'yep' );
 }
+

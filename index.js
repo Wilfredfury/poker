@@ -1,8 +1,8 @@
 // express.io umoznujici komunikaci pres sockety
 express = require('express.io');
 
-server = require('./server/main.js');
-data = require('./server/data.js');
+server = require('./server/server.js');
+model = require('./server/model.js');
 
 
 app = express();
@@ -11,7 +11,7 @@ app.http().io();
 app.use( express.static('client') );
 
 // hlidani requestu z clienta
-app.io.route( 'first_request', function(req){
+app.io.route( 'login-request', function(req){
 	// pokud nema spojeni definovanou session, ulozit object do req.session
 	req.session = req.session || {}
 	// prvni komunikace pres spojeni => prirazeni uzivatele
@@ -19,14 +19,16 @@ app.io.route( 'first_request', function(req){
 		req.session.user = req.data.mail;
 	}
 
-  console.log(req.data.mail);
 
-	// ukazka vystupu do console
-	console.log( server.getDivResponse( req.session.user ) );
-	// vypis aktualnich uzivatelu
-	console.log( server.usersList );
+
+
+  server.addUserList(req.session.user);
+
+  // vypis aktualnich uzivatelu
+  console.log(server.getUserList());
+
 	// vraceni odpovedi na clienta
-	req.io.emit('first_response', {div: server.getDivResponse( req.session.user )});	
+	req.io.emit('login-response', model.isRegistred(req.session.user));
 });
 
 // spusteni aplikace na portu 4987

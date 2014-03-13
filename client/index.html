@@ -6,6 +6,8 @@
 		<!-- cesta k js souborum z ./client . cely adresar client je pridan na serveru -->
 		<script src="js/jquery-1.7.1.min.js"></script>
 		<script src="js/client.js"></script>
+		<script src="js/user.js"></script>
+
 
         <link rel="stylesheet" type="text/css" href="css/main.css" />
 	</head>
@@ -14,14 +16,11 @@
             <input type="email" required="" id="login-email">
             <input type="submit" id="login-submit">
         </form>
-
-		<button id="call-backend">call backend</button>
-		<div id="response-wrapper"></div>
 	</body>
 	<script type="text/javascript">
 		var app = new traineeApp.Core();
 		$(document).ready( function(){
-			// inicializace hlidani kliku na button
+			// inicializace hlidani odeslani formulare
 			app.initListeners.call( app );			
 		});
 	</script>
