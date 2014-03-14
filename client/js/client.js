@@ -20,17 +20,17 @@ traineeApp.Core.prototype.initListeners = function(){
   var loginID = 'mail';
 
    if(localStorage.getItem(loginID) === null){
-       _this.formEl[0].hidden = false;
+       this.formEl[0].hidden = false;
+       this.formEl.submit( function(event){
+           event.preventDefault();
+           email = _this.emailEl.val();
+           _this.io.emit('login-request', {mail: email});
+       });
    }else{
        email = localStorage.getItem(loginID);
-       _this.io.emit('login-request', {mail: email});
+       this.io.emit('login-request', {mail: email});
    }
-  // po clicknuti na button posilam request na backend
-  this.formEl.submit( function(event){
-   event.preventDefault();
-   email = _this.emailEl.val();
-    _this.io.emit('login-request', {mail: email});
-  });
+
   // hlidani odpovedi ze serveru a zmena html
   this.io.on('login-response', function(data) {
     if(data.success){
@@ -38,7 +38,7 @@ traineeApp.Core.prototype.initListeners = function(){
        localStorage.setItem(loginID,_this.user.email);
       alert(JSON.stringify(_this.user));
       _this.formEl[0].hidden = true;
-      _this.contentEl.append("<p>logged in as "+_this.user.name+"</p><br><p> please wait for vote to start...</p>");
+      _this.contentEl.append("<p>logged in as "+_this.user.name+" in team "+_this.user.team+"</p><br><p> please wait for vote to start...</p>");
     }
     else
       alert("user not found");
