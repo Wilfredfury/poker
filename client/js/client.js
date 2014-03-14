@@ -6,6 +6,7 @@ var traineeApp = {};
 traineeApp.Core = function() {
   this.formEl = $('#login-form');
   this.emailEl = $('#login-email');
+  this.contentEl = $('#content');
   this.io = io.connect();
   this.user = {};
   // vygenerovani nicku tzn kazdy instance=tab ma sve idcko
@@ -27,9 +28,11 @@ traineeApp.Core.prototype.initListeners = function(){
     if(data.success){
       _this.user = new user(data.data);
       alert(JSON.stringify(_this.user));
+      _this.formEl[0].hidden = true;
+      _this.contentEl.append("<p>logged in as "+_this.user.name+"</p><br><p> please wait for vote to start...</p>");
     }
     else
-      alert("nejsi prihlasen");
+      alert("user not found");
   });
 };
 
