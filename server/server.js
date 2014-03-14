@@ -13,4 +13,3 @@ exports.addUserList = function( userId ) {
 exports.getUserList = function(){
   return exports.usersList;
 }
-

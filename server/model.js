@@ -77,3 +77,13 @@ exports.getRole = function (email){
   }
 };
 
+exports.getUS = function (userTeam){
+  var us = exports.userStories();
+
+  for(var key in us){
+    if (us[key].team === userTeam.team) {
+
+    }
+  }
+  return;
+};
