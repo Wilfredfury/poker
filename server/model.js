@@ -8,7 +8,7 @@ exports.users = function () {
       name: "test test",
       team: "masterA",
       email: "test@test.cz",
-      role: "developer"
+      role: "SCRUMmaster"
     },
     {
       name: "Tomas Balicek",
@@ -25,9 +25,15 @@ exports.users = function () {
     {
       name: "Tomas Roch",
       team: "masterA",
-      email: "tomas.rochk@socialbakers.com",
+      email: "tomas.roch@socialbakers.com",
       role: "developer"
-    }
+    },
+    {
+        name: "Tomas Krasny",
+        team: "masterB",
+        email: "tomas.krasny@socialbakers.com",
+        role: "developer"
+      }
   ];
 
   return users;
@@ -46,12 +52,12 @@ exports.userStories = function () {
     },
     {
       name: 'user story 3',
-      team: 'masterA'
+      team: 'masterB'
     }
   ];
 
   return userStories;
-}
+};
 
 
 exports.isRegistred = function (email) {
@@ -61,7 +67,7 @@ exports.isRegistred = function (email) {
       return {success: true, data: users[key]};
   }
   return {success: false};
-}
+};
 
 exports.getRole = function (email){
   var users = exports.users();
@@ -69,5 +75,5 @@ exports.getRole = function (email){
     if (users[key].email === email)
       return users[key].role;
   }
-}
+};
 
