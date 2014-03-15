@@ -57,6 +57,7 @@ view.messageTypes = {
 		error: 'error',
 		success:'success'
 };
+*/
 
 view.prototype.allUS = function(us){
     // vypise userStories do tabulky s tacitkem na vyber
