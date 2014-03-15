@@ -8,21 +8,22 @@ traineeApp.Core = function() {
   this.emailEl = $('#login-email');
   this.submitEl = $('#login-submit');
   this.contentEl = $('#content');
+  this.storiesEl = $('button');
+  this.buttView = $('.butt');  // pouze test
   this.io = io.connect();
   this.user = {};
 };
 
 traineeApp.Core.prototype.init = function() {
-    //hlidana promenna pro prihlaseni v localStorage
     var loginID = 'mail';
 	this.initListeners(loginID);
 	this.sendLogin(loginID);
+    this.sendUs();
 };
 
 traineeApp.Core.prototype.sendLogin = function(loginID) {
-    // _this mi drzi scope traineeApp.Core    
+	var email = "";
 	var _this = this;
-    var email = "";
 	if(localStorage.getItem(loginID) === null){
 		this.formEl[0].hidden = false;
 		_this.formEl.submit( function(event){
@@ -46,7 +47,6 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             localStorage.setItem(loginID,_this.user.email);
             viewInstance.flashMsg("flashMsg", "successfuly logged in!", view.messageTypes.success, 2000);
             _this.formEl[0].hidden = true;
-            viewInstance.login(_this);
             if(_this.user.role == user.roleTypes.sm){
                 _this.io.emit("smUSList-request",_this.user);                    
             }
@@ -59,3 +59,14 @@ traineeApp.Core.prototype.initListeners = function(loginID){
         viewInstance.flashMsg("flashMsg", JSON.stringify(data), view.messageTypes.info, 2000);
     });
 };
+
+traineeApp.Core.prototype.sendUs = function(){
+    var _this = this;
+    var bt;
+    this.storiesEl.click(function(){
+        bt = $(this).val();
+        alert(bt);
+        _this.io.emit('userstories-id', {usid: bt});
+    });
+};
+

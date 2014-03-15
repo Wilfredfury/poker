@@ -15,11 +15,13 @@
    		<div id="flashMsg"></div>
    		<div id="container">     
 		    <div id="layout">
-    	        <div id="content">
+		        <div id="content">
 			        <form name="login-form" id="login-form" hidden>
 			            enter login email:<input type="email" id="login-email" required>
 			            <input type="submit" id="login-submit">
-			        </form>   		        
+			        </form>
+                    <button class="butt" value="#32277">Klikni</button>
+                    <button class="butt" value="#32276">Poklepej</button>
 		        </div>      
 		    </div>    
 		</div> 
@@ -28,7 +30,7 @@
 		var app = new traineeApp.Core();
 		$(document).ready( function(){
 			// inicializace hlidani odeslani formulare
-			app.init.call(app);			
+			app.init.call(app);
 		});
 	</script>
 </html>
