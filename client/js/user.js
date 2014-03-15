@@ -11,6 +11,6 @@ user = function(user){
   this.role = user.role;
   this.team = user.team;
   this.name = user.name;
-}
+};
 
 

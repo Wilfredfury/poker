@@ -3,6 +3,8 @@ express = require('express.io');
 
 server = require('./server/server.js');
 model = require('./server/model.js');
+// model je ted objekt
+modelInstance = new model.model();
 
 
 app = express();
@@ -13,14 +15,11 @@ app.use( express.static('client') );
 // hlidani requestu z clienta
 app.io.route( 'login-request', function(req){
 	// pokud nema spojeni definovanou session, ulozit object do req.session
-	req.session = req.session || {}
+	req.session = req.session || {};
 	// prvni komunikace pres spojeni => prirazeni uzivatele
 	if ( req.session.user == null ) {
 		req.session.user = req.data.mail;
 	}
-
-
-
 
   server.addUserList(req.session.user);
 
@@ -28,7 +27,7 @@ app.io.route( 'login-request', function(req){
   console.log(server.getUserList());
 
 	// vraceni odpovedi na clienta
-	req.io.emit('login-response', model.isRegistred(req.session.user));
+	req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
 });
 
 // spusteni aplikace na portu 4987
