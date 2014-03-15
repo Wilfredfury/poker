@@ -49,6 +49,7 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             _this.formEl[0].hidden = true;
             if(_this.user.role == user.roleTypes.sm){
                 _this.io.emit("smUSList-request",_this.user);                    
+      viewInstance.flashMsg("flashMsg", "Congrats, you did it!", "success", 2000)
             }
         } else{
             viewInstance.flashMsg("flashMsg", "user not found!", view.messageTypes.error, 2000);

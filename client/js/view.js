@@ -59,5 +59,6 @@ view.messageTypes = {
 		error: 'error',
 		success:'success'
 };
+*/
 
 
