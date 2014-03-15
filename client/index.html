@@ -7,16 +7,18 @@
 		<script src="js/jquery-1.7.1.min.js"></script>
 		<script src="js/client.js"></script>
 		<script src="js/user.js"></script>
-
+		<script src="js/view.js"></script>
 
         <link rel="stylesheet" type="text/css" href="css/main.css" />
 	</head>
 	<body>
+    	<div id="flashMsg">
+    	</div>     
 		<div id="container">     
-		    <div id="layout">     
+		    <div id="layout">
 		        <div id="content">
 			        <form name="login-form" id="login-form" hidden>
-			            <input type="email" required="" id="login-email">
+			            <input type="email" id="login-email" required>
 			            <input type="submit" id="login-submit">
 			        </form>   		        
 		        </div>      
@@ -27,7 +29,7 @@
 		var app = new traineeApp.Core();
 		$(document).ready( function(){
 			// inicializace hlidani odeslani formulare
-			app.initListeners.call( app );			
+			app.init.call(app);			
 		});
 	</script>
 </html>
