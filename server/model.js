@@ -101,6 +101,7 @@ model.prototype.getRole = function (email){
 };
 
 // vrati vsechny us sm teamu
+// vstup: objekt sm (veskere info o sm)
 model.prototype.getUS = function (sm){
   for(var key in this.userStories){
     if (this.userStories.team === sm.team) {

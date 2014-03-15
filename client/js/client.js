@@ -42,6 +42,7 @@ traineeApp.Core.prototype.sendLogin = function(loginID) {
 
 traineeApp.Core.prototype.initListeners = function(loginID){
 	var _this = this;
+    var viewInstance = new view();
   // hlidani odpovedi ze serveru a zmena html
   this.io.on('login-response', function(data) {
     if(data.success){
@@ -51,11 +52,11 @@ traineeApp.Core.prototype.initListeners = function(loginID){
       _this.formEl[0].hidden = true;
       _this.buttView.show();  // pouze test
       _this.contentEl.append("<p>logged in as "+_this.user.name+" in team "+_this.user.team+"</p><br><p> please wait for vote to start...</p>");
+      viewInstance.flashMsg("flashMsg", "Congrats, you did it!", "success", 2000)
     }
     else{
-    	var viewInstance = new view();
 //      alert("user not found!");
-    	viewInstance.flashMsg("flashMsg", "user not found!", 'error', 10000);
+    	viewInstance.flashMsg("flashMsg", "Ups, an error occurred", "error", 2000);
     }
   });
 };
