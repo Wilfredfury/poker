@@ -22,7 +22,7 @@ traineeApp.Core.prototype.init = function() {
 };
 
 traineeApp.Core.prototype.sendLogin = function(loginID) {
-    // _this mi drzi scope traineeApp.Core    
+	var email = "";
 	var _this = this;
 	if(localStorage.getItem(loginID) === null){
 		this.formEl[0].hidden = false;
@@ -47,7 +47,6 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             localStorage.setItem(loginID,_this.user.email);
             viewInstance.flashMsg("flashMsg", "successfuly logged in!", view.messageTypes.success, 2000);
             _this.formEl[0].hidden = true;
-            viewInstance.login(_this);
             if(_this.user.role == user.roleTypes.sm){
                 _this.io.emit("smUSList-request",_this.user);                    
             }
