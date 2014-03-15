@@ -7,6 +7,8 @@ traineeApp.Core = function() {
   this.formEl = $('#login-form');
   this.emailEl = $('#login-email');
   this.contentEl = $('#content');
+  this.storiesEl = $('button');
+  this.buttView = $('.butt');  // pouze test
   this.io = io.connect();
   this.user = {};
 
@@ -15,16 +17,16 @@ traineeApp.Core = function() {
 };
 
 traineeApp.Core.prototype.init = function() {
-	  // _this mi drzi scope traineeApp.Core	
-	  //	  var _this = this;
 	var loginID = 'mail';
-	  this.initListeners(loginID);
-	  this.sendLogin(loginID);
+	this.initListeners(loginID);
+	this.sendLogin(loginID);
+    this.sendUs();
 };
 
 traineeApp.Core.prototype.sendLogin = function(loginID) {
 	var email = "";
 	var _this = this;
+    this.buttView.hide(); // pouze test
 	if(localStorage.getItem(loginID) === null){
 		this.formEl[0].hidden = false;
 		this.formEl.submit( function(event){
@@ -47,6 +49,7 @@ traineeApp.Core.prototype.initListeners = function(loginID){
        localStorage.setItem(loginID,_this.user.email);
       alert(JSON.stringify(_this.user));
       _this.formEl[0].hidden = true;
+      _this.buttView.show();  // pouze test
       _this.contentEl.append("<p>logged in as "+_this.user.name+" in team "+_this.user.team+"</p><br><p> please wait for vote to start...</p>");
     }
     else{
@@ -56,3 +59,14 @@ traineeApp.Core.prototype.initListeners = function(loginID){
     }
   });
 };
+
+traineeApp.Core.prototype.sendUs = function(){
+    var _this = this;
+    var bt;
+    this.storiesEl.click(function(){
+        bt = $(this).val();
+        alert(bt);
+        _this.io.emit('userstories-id', {usid: bt});
+    });
+};
+

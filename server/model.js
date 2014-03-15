@@ -51,7 +51,7 @@ model.prototype.load = function(){
 
 	userStories =[{
 	                team: 'masterA',
-	                userStories:[{
+	                us:[{
 	                	title:'user story 1',
 	                	titleID:'#32378',
 	                	description:'blabla storka je skvela nad sto znaku na to prdet',
@@ -66,7 +66,7 @@ model.prototype.load = function(){
 				  	},
 				  	{
 					team: 'masterB',
-				    userStories:[{
+				    us:[{
 				    	title:'user story 3',
 				    	titleID:'#55221',
 				    	description:'blabla nad sto znaku na to prdet',
@@ -100,14 +100,13 @@ model.prototype.getRole = function (email){
   }
 };
 
-// predelat, jina nebo k nicemu
-model.prototype.getUS = function (userTeam){
-  for(var key in us){
-    if (us[key].team === userTeam.team) {
-
+// vrati vsechny us sm teamu
+model.prototype.getUS = function (sm){
+  for(var key in this.userStories){
+    if (this.userStories.team === sm.team) {
+      return this.userStories[key].us;
     }
   }
-  return;
 };
 
 exports.model = model;
