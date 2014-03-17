@@ -16,69 +16,75 @@ model.prototype.setUserStories = function(us) {
 };
 
 model.prototype.load = function(){
-	users =[
-	        {
-	          name: "test test",
-	          team: "masterA",
-	          email: "test@test.cz",
-	          role: "SCRUMmaster"
-	        },
-	        {
-	          name: "Tomas Balicek",
-	          team: "masterA",
-	          email: "tomas.balicek@socialbakers.com",
-	          role: "developer"
-	        },
-	        {
-	          name: "Lukas Cerny",
-	          team: "masterA",
-	          email: "lukas.cerny@socialbakers.com",
-	          role: "developer"
-	        },
-	        {
-	          name: "Tomas Roch",
-	          team: "masterA",
-	          email: "tomas.roch@socialbakers.com",
-	          role: "developer"
-	        },
-	        {
-	            name: "Tomas Krasny",
-	            team: "masterB",
-	            email: "tomas.krasny@socialbakers.com",
-	            role: "developer"
-	         }
-	      ];
+    users =[
+	    {
+	        name: "test test",
+	        team: "masterA",
+	        email: "test@test.cz",
+	        role: "SCRUMmaster"
+	    },
+	    {
+	        name: "Tomas Balicek",
+	        team: "masterA",
+	        email: "tomas.balicek@socialbakers.com",
+	        role: "developer"
+	    },
+	    {
+	        name: "Lukas Cerny",
+	        team: "masterA",
+	        email: "lukas.cerny@socialbakers.com",
+	        role: "developer"
+	    },
+	    {
+	        name: "Tomas Roch",
+	        team: "masterA",
+	        email: "tomas.roch@socialbakers.com",
+	        role: "developer"
+	    },
+	    {
+	        name: "Tomas Krasny",
+	        team: "masterB",
+	        email: "tomas.krasny@socialbakers.com",
+	        role: "developer"
+	    }
+	];
 
-	userStories =[{
-	                team: 'masterA',
-	                userStories:[{
-	                	title:'user story 1',
-	                	titleID:'#32378',
-	                	description:'blabla storka je skvela nad sto znaku na to prdet',
-	                	type:'us'
-	                },
-	                {
-	                	title:'debug 00001',
-	                	titleID:'#00001',
-	                	description:'nekdo rozbil zachod',
-	                	type:'db'
-	                }]
-				  	},
-				  	{
-					team: 'masterB',
-				    userStories:[{
-				    	title:'user story 3',
-				    	titleID:'#55221',
-				    	description:'blabla nad sto znaku na to prdet',
-				    	type:'us'
-				    },
-				    {
-				    	title:'deeeee 00002',
-				    	titleID:'#00002',
-				    	description:'nekdo ho opravil',
-				    	type:'db'
-				    }]
-				 }];
+	userStories =[
+	    {
+	        team: 'masterA',
+	        userStories:[
+	            {
+	                title:'user story 1',
+	                titleID:'#32378',
+	               	description:'blabla storka je skvela nad sto znaku na to prdet',
+	               	type:'us'
+	            },
+	            {
+	               	title:'debug 00001',
+	               	titleID:'#00001',
+	               	description:'nekdo rozbil zachod',
+	               	type:'db'
+	            }
+	        ]
+		},
+		{
+			team: 'masterB',
+		    userStories:[
+		        {
+			    	title:'user story 3',
+			    	titleID:'#55221',
+			    	description:'blabla nad sto znaku na to prdet',
+			    	type:'us'
+		        },
+		        {
+			    	title:'deeeee 00002',
+			    	titleID:'#00002',
+			    	description:'nekdo ho opravil',
+			    	type:'db'
+		        }
+		    ]
+		}
+	];
 
 	this.setUsers(users);
 	this.setUserStories(userStories);
