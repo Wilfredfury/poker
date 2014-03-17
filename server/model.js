@@ -52,7 +52,7 @@ model.prototype.load = function(){
 	userStories =[
 	    {
 	        team: 'masterA',
-	        userStories:[
+	        us:[
 	            {
 	                title:'user story 1',
 	                titleID:'#32378',
@@ -69,7 +69,7 @@ model.prototype.load = function(){
 		},
 		{
 			team: 'masterB',
-		    userStories:[
+		    us:[
 		        {
 			    	title:'user story 3',
 			    	titleID:'#55221',
