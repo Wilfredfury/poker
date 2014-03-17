@@ -1,11 +1,14 @@
-    #container {     
+    body{
+    	margin: 0;
+    }
+    #container {         
         display:table;     
         border-collapse:collapse;   
-        height:200px;   
+        height:150px;   
         width:100%; 
         border:0px solid #000; 
     }          
-    #layout {     
+    #layout {
         display:table-row;    
     }            
     #content {     
@@ -13,14 +16,10 @@
         text-align:center;  
         vertical-align:middle;     
     }   
-   
-   
-   
-   
     .message{
-     -webkit-background-size: 40px 40px;
-     -moz-background-size: 40px 40px;
-     background-size: 40px 40px;
+     -webkit-background-size: 30px 30px;
+     -moz-background-size: 30px 30px;
+     background-size: 60px 60px;
      background-image: -webkit-gradient(linear, left top, right bottom,
                 color-stop(.25, rgba(255, 255, 255, .05)), color-stop(.25, transparent),
                 color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .05)),
@@ -48,7 +47,8 @@
      border: 1px solid;
      color: #fff;
      padding: 15px;
-     position: fixed;
+     text-align:center;  
+     position: relative;
      _position: absolute;
      text-shadow: 0 1px 0 rgba(0,0,0,.5);
      -webkit-animation: animate-bg 5s linear infinite;
@@ -75,7 +75,7 @@
 }
 
 .message h3{
-     margin: 0 0 5px 0;
+     margin: 0 0 0 0;
 }
 
 .message p{
@@ -87,7 +87,7 @@
        background-position: 0 0;
     }
     to {
-       background-position: -80px 0;
+       background-position: -60px 0;
     }
 }
 
@@ -96,6 +96,6 @@
        background-position: 0 0;
     }
     to {
-       background-position: -80px 0;
+       background-position: -60px 0;
     }
 }
