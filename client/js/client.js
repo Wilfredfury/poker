@@ -6,6 +6,7 @@ var traineeApp = {};
 traineeApp.Core = function() {
   this.formEl = $('#login-form');
   this.emailEl = $('#login-email');
+  this.submitEl = $('#login-submit');
   this.contentEl = $('#content');
   this.io = io.connect();
   this.user = {};
