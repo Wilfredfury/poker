@@ -35,7 +35,7 @@ view.prototype.USList = function(us){
                             '</td><td>'+us[key].title+
                             '</td><td>'+us[key].type+
                             '</td><td>'+desc.substr(0,Math.min(desc.length,100))+
-                            '</td><td><button class="butt" value="'+us[key].titleID+'">select</button></td></tr>');
+                            '</td><td><button class="btn" value="'+us[key].titleID+'">select</button></td></tr>');
     }    
 };
 // vycet pro jistotu spravneho vyberu typu hlasky

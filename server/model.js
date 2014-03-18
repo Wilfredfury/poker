@@ -19,7 +19,7 @@ model.prototype.load = function(){
     users =[
 	    {
 	        name: "test test",
-	        team: "masterA",
+	        team: "masterB",
 	        email: "test@test.cz",
 	        role: "SCRUMmaster"
 	    },
@@ -117,5 +117,6 @@ model.prototype.getUS = function (team){
         }
     }
 };
+
 
 exports.model = model;

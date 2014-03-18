@@ -25,7 +25,7 @@ traineeApp.Core.prototype.sendLogin = function(loginID) {
     var email = "";
 	if(localStorage.getItem(loginID) === null){
 		this.formEl[0].hidden = false;
-		this.formEl.submit( function(event){
+		$('#login-form').submit( function(event){
 			event.preventDefault();
 			email = _this.emailEl.val();
 			_this.io.emit('login-request', {mail: email});
@@ -48,9 +48,7 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             _this.formEl[0].hidden = true;
             viewInstance.login(_this);
             if(_this.user.role == "SCRUMmaster"){
-                setTimeout(function(){
                     _this.io.emit("smUSList-request",_this.user);                    
-                },2000);
             }
                 },2000);
             }
