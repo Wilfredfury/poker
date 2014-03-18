@@ -20,7 +20,6 @@ app.io.route( 'login-request', function(req){
 		req.session.user = req.data.mail;
 	}
 	server.addUserList(req.session.user);
-
 	// vypis aktualnich uzivatelu
 	console.log(server.getUserList());
 
@@ -33,6 +32,7 @@ app.io.route("smUSList-request",function(req){
 });
 app.io.route('userstories-id', function(req){
     // v req.usid je id user stories, kterou sm vybral
+
 
 });
 

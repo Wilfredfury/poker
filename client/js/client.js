@@ -48,8 +48,8 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             _this.formEl[0].hidden = true;
             viewInstance.login(_this);
             if(_this.user.role == "SCRUMmaster"){
-                setTimeout(function(){
-                    _this.io.emit("smUSList-request",_this.user);                    
+                _this.io.emit("smUSList-request",_this.user);                
+            }
                 },2000);
             }
         } else{
