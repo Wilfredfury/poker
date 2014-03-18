@@ -20,6 +20,7 @@ app.io.route( 'login-request', function(req){
 		req.session.user = req.data.mail;
 	}
 	server.addUserList(req.session.user);
+
 	// vypis aktualnich uzivatelu
 	console.log(server.getUserList());
 
@@ -28,7 +29,6 @@ app.io.route( 'login-request', function(req){
 });
 
 app.io.route("smUSList-request",function(req){
-    console.log(modelInstance.getUS(req.data.team));
     req.io.emit('smUSList-response', modelInstance.getUS(req.data.team));
 });
 app.io.route('userstories-id', function(req){

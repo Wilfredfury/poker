@@ -51,18 +51,18 @@ model.prototype.load = function(){
 
 	userStories =[
 	    {
-	        team: 'master',
+	        team: 'masterA',
 	        us:[
 	            {
 	                title:'user story 1',
 	                titleID:'#32378',
-	               	description:'blabla storka je skvela nad sto znaku na to prdet',
+	               	description:'nad sto znaku useknout nad sto znnad sto znnadnad sto znnad stosto znnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad sto toto uz je prilis',
 	               	type:'us'
 	            },
 	            {
 	               	title:'debug 00001',
 	               	titleID:'#00001',
-	               	description:'nekdo rozbil zachod',
+	               	description:'viewUS vraci spatne hodnoty',
 	               	type:'db'
 	            }
 	        ]
@@ -73,13 +73,13 @@ model.prototype.load = function(){
 		        {
 			    	title:'user story 3',
 			    	titleID:'#55221',
-			    	description:'blabla nad sto znaku na to prdet',
+			    	description:'sm a dev tvorit tym',
 			    	type:'us'
 		        },
 		        {
 			    	title:'deeeee 00002',
 			    	titleID:'#00002',
-			    	description:'nekdo ho opravil',
+			    	description:'ztrata dat pri predani funkci',
 			    	type:'db'
 		        }
 		    ]

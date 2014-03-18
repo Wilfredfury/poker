@@ -46,15 +46,18 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             localStorage.setItem(loginID,_this.user.email);
             viewInstance.flashMsg("flashMsg", "successfuly logged in!", view.messageTypes.success, 2000);
             _this.formEl[0].hidden = true;
-            _this.contentEl.append("<p>logged in as "+_this.user.name+" in team "+_this.user.team+"</p><br><p> please wait for vote to start...</p>");
+            viewInstance.login(_this);
             if(_this.user.role == "SCRUMmaster"){
-                _this.io.emit("smUSList-request",_this.user);                
+                setTimeout(function(){
+                    _this.io.emit("smUSList-request",_this.user);                    
+                },2000);
             }
         } else{
             viewInstance.flashMsg("flashMsg", "user not found!", view.messageTypes.error, 2000);
         }
     });
     this.io.on('smUSList-response', function(data){
+        viewInstance.USList(data);
         viewInstance.flashMsg("flashMsg", JSON.stringify(data), view.messageTypes.info, 2000);
     });
 };
