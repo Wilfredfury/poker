@@ -3,7 +3,7 @@
  */
 var model = function(){
 	this.users = null;
-	this.us = null;
+	this.userStories = null;
 	this.load();
 };
 
@@ -12,7 +12,7 @@ model.prototype.setUsers = function(users) {
 };
 
 model.prototype.setUserStories = function(us) {
-	this.us = us;
+	this.userStories = us;
 };
 
 model.prototype.load = function(){
@@ -51,7 +51,7 @@ model.prototype.load = function(){
 
 	userStories =[
 	    {
-	        team: 'masterA',
+	        team: 'master',
 	        us:[
 	            {
 	                title:'user story 1',
@@ -106,14 +106,16 @@ model.prototype.getRole = function (email){
   }
 };
 
-// predelat, jina nebo k nicemu
-model.prototype.getUS = function (userTeam){
-  for(var key in us){
-    if (us[key].team === userTeam.team) {
-
+/**
+ * vrati vsechny us sm teamu
+ * @param team - team pro vybrani user stories
+ * */
+model.prototype.getUS = function (team){
+    for(var key in this.userStories){
+        if (this.userStories[key].team === team) {
+            return this.userStories[key].us;
+        }
     }
-  }
-  return;
 };
 
 exports.model = model;
