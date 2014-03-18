@@ -20,6 +20,7 @@ app.io.route( 'login-request', function(req){
 		req.session.user = req.data.mail;
 	}
 	server.addUserList(req.session.user);
+
 	// vypis aktualnich uzivatelu
 	console.log(server.getUserList());
 

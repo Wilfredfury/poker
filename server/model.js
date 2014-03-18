@@ -51,7 +51,7 @@ model.prototype.load = function(){
 
 	userStories =[
 	    {
-	        team: 'master',
+	        team: 'masterA',
 	        us:[
 	            {
 	                title:'user story 1',
