@@ -19,7 +19,7 @@ model.prototype.load = function(){
     users =[
 	    {
 	        name: "test test",
-	        team: "masterB",
+	        team: "masterA",
 	        email: "test@test.cz",
 	        role: "SCRUMmaster"
 	    },

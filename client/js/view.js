@@ -1,7 +1,7 @@
 /**
  * Created by balicekt on 13/03/14.
  */
-var view = function(){
+var view = function(app){
     //pole pro zobrazovani specificke zpravy pouze jednou podle textu ? pridat generaci IDzpravy ?
     this.showing = [];
 };
@@ -25,9 +25,14 @@ view.prototype.flashMsg = function ( elID, text, type, hide) {
     }
 };
 
-view.prototype.USList = function(us){
+view.prototype.USList = function(us, app){
     $('#vote-wait').remove();
-    $('#USList').remove();
+    $('#smUSList-btn').remove();
+    $('#USList').remove();    
+    $('#content').append('<button id="smUSList-btn">request userStories</button>');
+    $('#smUSList-btn').on('click' ,function(){
+        app.io.emit("smUSList-request",app.user);
+    });
     $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
     for (var key in us){
         // desc promenna pro zlepseni citelnosti vyrazu

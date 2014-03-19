@@ -57,7 +57,7 @@ traineeApp.Core.prototype.initListeners = function(loginID){
         }
     });
     this.io.on('smUSList-response', function(data){
-        viewInstance.USList(data);
+        viewInstance.USList(data, _this);
         viewInstance.flashMsg("flashMsg", JSON.stringify(data), view.messageTypes.info, 2000);
     });
 };

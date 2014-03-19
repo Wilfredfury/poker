@@ -3,7 +3,7 @@ express = require('express.io');
 
 server = require('./server/server.js');
 model = require('./server/model.js');
-// model je ted objekt
+
 modelInstance = new model.model();
 
 app = express();
