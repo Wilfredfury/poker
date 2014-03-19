@@ -12,5 +12,5 @@ user = function(user){
 
 user.roleTypes = {
     dev: 'developer',
-    us: 'SCRUMmaster'
+    sm: 'SCRUMmaster'
 };

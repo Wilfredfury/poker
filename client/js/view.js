@@ -27,6 +27,7 @@ view.prototype.flashMsg = function ( elID, text, type, hide) {
 
 view.prototype.USList = function(us){
     $('#vote-wait').remove();
+    $('#USList').remove();
     $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
     for (var key in us){
         // desc promenna pro zlepseni citelnosti vyrazu
