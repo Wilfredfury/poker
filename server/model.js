@@ -118,5 +118,4 @@ model.prototype.getUS = function (team){
     }
 };
 
-
 exports.model = model;

@@ -34,7 +34,6 @@ app.io.route("smUSList-request",function(req){
 app.io.route('userstories-id', function(req){
     // v req.usid je id user stories, kterou sm vybral
 
-
 });
 
 // spusteni aplikace na portu 4987

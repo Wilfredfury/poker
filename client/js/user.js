@@ -10,4 +10,7 @@ user = function(user){
   this.name = user.name;
 };
 
-
+user.roleTypes = {
+    dev: 'developer',
+    us: 'SCRUMmaster'
+};
