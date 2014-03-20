@@ -7,7 +7,9 @@ var view = function(app){
 };
 
 view.prototype.login = function (app){
-    app.contentEl.append("<p id='login-info'>logged in as "+app.user.name+" in team "+app.user.team+"<br></p><p id='vote-wait'> please wait for vote to start...</p>");  
+    app.contentEl.append("<p id='login-info'>logged in as <b>"+
+                          app.user.name+"</b> in team <b>"+
+                          app.user.team+"</b><br></p><p id='vote-wait'> please wait for vote to start...</p>");  
 };
 // nahrada za alerty
 view.prototype.flashMsg = function ( elID, text, type, hide) {
@@ -25,12 +27,16 @@ view.prototype.flashMsg = function ( elID, text, type, hide) {
     }
 };
 
-view.prototype.USList = function(us, app){
+view.prototype.USListRemove = function(){
     $('#vote-wait').remove();
     $('#smUSList-btn').remove();
-    $('#USList').remove();    
+    $('#USList').remove();
+};
+
+view.prototype.USList = function(us, app){
+    this.USListRemove();
     $('#content').append('<button id="smUSList-btn">request userStories</button>');
-    $('#smUSList-btn').on('click' ,function(){
+    $('#smUSList-btn').click(function(){
         app.io.emit("smUSList-request",app.user);
     });
     $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
@@ -41,8 +47,8 @@ view.prototype.USList = function(us, app){
                             '</td><td>'+us[key].title+
                             '</td><td>'+us[key].type+
                             '</td><td>'+desc.substr(0,Math.min(desc.length,100))+
-                            '</td><td><button class="btn" value="'+us[key].titleID+'">select</button></td></tr>');
-    }    
+                            '</td><td><button class="USbtn" value="'+us[key].titleID+'">select</button></td></tr>');
+    }
 };
 // vycet pro jistotu spravneho vyberu typu hlasky
 view.messageTypes = {

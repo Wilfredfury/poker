@@ -91,19 +91,20 @@ model.prototype.load = function(){
 };
 
 model.prototype.isRegistered = function (email) {
-  for (var key in this.users) {
-    if (this.users[key].email === email){
-      return {success: true, data: this.users[key]};
+    for (var key in this.users) {
+        if (this.users[key].email === email){
+            return {success: true, data: this.users[key]};
+        }
     }
-  }
-  return {success: false};
+    return {success: false};
 };
 
 model.prototype.getRole = function (email){
-  for (var key in this.users) {
-    if (this.users[key].email === email)
-      return this.users[key].role;
-  }
+    for (var key in this.users) {
+        if (this.users[key].email === email) {
+            return this.users[key].role;            
+        }
+    }
 };
 
 /**
