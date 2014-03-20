@@ -111,10 +111,18 @@ model.prototype.getRole = function (email){
  * vrati vsechny us sm teamu
  * @param team - team pro vybrani user stories
  * */
-model.prototype.getUS = function (team){
+model.prototype.getUSList = function (team){
     for(var key in this.userStories){
         if (this.userStories[key].team === team) {
             return this.userStories[key].us;
+        }
+    }
+};
+
+model.prototype.getUS = function (usl,titleID){
+    for(var key in usl){
+        if (usl[key].titleID === titleID){
+            return usl[key];
         }
     }
 };
