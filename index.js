@@ -29,18 +29,13 @@ app.io.route( 'login-request', function(req){
 });
 
 app.io.route("smUSList-request",function(req){
-    req.io.emit('smUSList-response', modelInstance.getUS(req.data.team));
-});
-app.io.route('userstories-id', function(req){
-    // v req.usid je id user stories, kterou sm vybral
-
+    req.io.emit('smUSList-response', modelInstance.getUSList(req.data.team));
 });
 
 app.io.route('userstories-id', function(req){
-    // v req.usid je id user stories, kterou sm vybral
-
+    server.addUSList(req.data.team, req.data.usid);
+    console.log(server.getUSList());
 });
-
 
 // spusteni aplikace na portu 4987
 console.log('listen at localhost:4987');

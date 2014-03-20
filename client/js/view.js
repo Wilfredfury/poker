@@ -8,6 +8,13 @@ var view = function(app){
     this.showing = [];
 };
 
+view.messageTypes = {
+        info: 'info',
+        warning: 'warning',
+        error: 'error',
+        success:'success'
+};
+
 view.prototype.login = function (app){
     app.contentEl.append("<p id='login-info'>logged in as <b>"+
                           app.user.name+"</b> in team <b>"+
@@ -35,6 +42,11 @@ view.prototype.USListRemove = function(){
     $('#USList').remove();
 };
 
+/**
+ * vytvoreni listu pro vyber US
+ * @param us user stories k vyberu
+ * @param app scope traineeApp.core
+ */
 view.prototype.USList = function(us, app){
     this.USListRemove();
     $('#content').append('<button id="smUSList-btn">request userStories</button>');
@@ -51,14 +63,8 @@ view.prototype.USList = function(us, app){
                             '</td><td>'+desc.substr(0,Math.min(desc.length,100))+
                             '</td><td><button class="USbtn" value="'+us[key].titleID+'">select</button></td></tr>');
     }
+    $('.USbtn').click(function(){
+        var bt = $(this).val();
+        app.io.emit('userstories-id', {team: app.user.team, usid: bt});
+    });
 };
-// vycet pro jistotu spravneho vyberu typu hlasky
-view.messageTypes = {
-		info: 'info',
-		warning: 'warning',
-		error: 'error',
-		success:'success'
-};
-*/
-
-
