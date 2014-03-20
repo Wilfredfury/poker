@@ -118,7 +118,6 @@ model.prototype.getUSList = function (team){
         }
     }
 };
-
 model.prototype.getUS = function (usl,titleID){
     for(var key in usl){
         if (usl[key].titleID === titleID){

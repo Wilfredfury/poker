@@ -8,6 +8,8 @@ traineeApp.Core = function() {
   this.emailEl = $('#login-email');
   this.submitEl = $('#login-submit');
   this.contentEl = $('#content');
+  this.storiesEl = $('button');
+  this.buttView = $('.butt');  // pouze test
   this.io = io.connect();
   this.user = {};
 };
@@ -16,11 +18,13 @@ traineeApp.Core.prototype.init = function() {
     var loginID = 'mail';
 	this.initListeners(loginID);
 	this.sendLogin(loginID);
+    this.sendUs();
 };
 
 traineeApp.Core.prototype.sendLogin = function(loginID) {
 	var email = "";
 	var _this = this;
+    this.buttView.hide(); // pouze test
 	if(localStorage.getItem(loginID) === null){
 		this.formEl[0].hidden = false;
 		_this.formEl.submit( function(event){
@@ -57,3 +61,14 @@ traineeApp.Core.prototype.initListeners = function(loginID){
         viewInstance.flashMsg("flashMsg", JSON.stringify(data), view.messageTypes.info, 2000);
     });
 };
+
+traineeApp.Core.prototype.sendUs = function(){
+    var _this = this;
+    var bt;
+    this.storiesEl.click(function(){
+        bt = $(this).val();
+        alert(bt);
+        _this.io.emit('userstories-id', {usid: bt});
+    });
+};
+

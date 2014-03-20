@@ -37,6 +37,12 @@ app.io.route('userstories-id', function(req){
     console.log(server.getUSList());
 });
 
+app.io.route('userstories-id', function(req){
+    // v req.usid je id user stories, kterou sm vybral
+
+});
+
+
 // spusteni aplikace na portu 4987
 console.log('listen at localhost:4987');
 app.listen(4987);
