@@ -50,8 +50,6 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             if(_this.user.role == user.roleTypes.sm){
                 _this.io.emit("smUSList-request",_this.user);                    
             }
-                },2000);
-            }
         } else{
             viewInstance.flashMsg("flashMsg", "user not found!", view.messageTypes.error, 2000);
         }
