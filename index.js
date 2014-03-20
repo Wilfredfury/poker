@@ -1,6 +1,5 @@
 // express.io umoznujici komunikaci pres sockety
 express = require('express.io');
-
 server = require('./server/server.js');
 model = require('./server/model.js');
 
@@ -9,20 +8,18 @@ modelInstance = new model.model();
 app = express();
 app.http().io();
 // pouziti adresare s obsahem pro clienta
-app.use( express.static('client') );
+app.use(express.static('client'));
 
 // hlidani requestu z clienta
-app.io.route( 'login-request', function(req){
+app.io.route('login-request', function(req){
 	// pokud nema spojeni definovanou session, ulozit object do req.session
 	req.session = req.session || {};
 	// prvni komunikace pres spojeni => prirazeni uzivatele
-	if ( req.session.user == null ) {
+	if (req.session.user == null) {
 		req.session.user = req.data.mail;
 	}
 	server.addUserList(req.session.user);
-
-	// vypis aktualnich uzivatelu
-	console.log(server.getUserList());
+	console.log(server.getUserList()); // vypis aktualnich uzivatelu
 
 	// vraceni odpovedi na clienta
 	req.io.emit('login-response', modelInstance.isRegistered(req.session.user));

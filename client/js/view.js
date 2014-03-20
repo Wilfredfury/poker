@@ -1,28 +1,41 @@
 /**
+ * funkce pro zobrazeni
  * Created by balicekt on 13/03/14.
  */
 
-
-var view = function(app){
-    //pole pro zobrazovani specificke zpravy pouze jednou podle textu ? pridat generaci IDzpravy ?
-    this.showing = [];
+traineeApp.view = function(){
+    this.showing = []; //pole pro zobrazovani specificke zpravy pouze jednou podle textu ? pridat generaci IDzpravy ?
 };
 
-view.messageTypes = {
-        info: 'info',
-        warning: 'warning',
-        error: 'error',
-        success:'success'
+/**
+ * vycet typu hlasek viz main.css
+ */
+traineeApp.view.messageTypes = {
+    info: 'info',
+    warning: 'warning',
+    error: 'error',
+    success:'success'
 };
 
-view.prototype.login = function (app){
+/**
+ * zobrazeni prihlasovacich udaju a vyzvu k cekani na hlasovani
+ * @param app - scope jadra aplikace pro pristup k informacim o uzivateli
+ */
+traineeApp.view.prototype.login = function(app){
     app.contentEl.append("<p id='login-info'>logged in as <b>"+
                           app.user.name+"</b> in team <b>"+
                           app.user.team+"</b><br></p><p id='vote-wait'> please wait for vote to start...</p>");  
 };
-// nahrada za alerty
-view.prototype.flashMsg = function ( elID, text, type, hide) {
-    var aShow = this.showing;
+
+/**
+ * zobrazeni hlasky uzivateli na urcitou dobu
+ * @param elID - prvek, na ktery se ma zprava napojit
+ * @param text - zobrazovana hlaska
+ * @param type - typ okna viz messageTypes
+ * @param hide - doba v ms za kterou hlaska zmizi
+ */
+traineeApp.view.prototype.flashMsg = function(elID, text, type, hide){
+    var aShow = this.showing; // pole zobrazenych hlasek
     if (!(aShow.indexOf(text) > -1)){
         aShow.push(text);    
     	var msg = $('<div class="'+ type +' message"><h3>'+ text +'</h3></div>');
@@ -36,7 +49,10 @@ view.prototype.flashMsg = function ( elID, text, type, hide) {
     }
 };
 
-view.prototype.USListRemove = function(){
+/**
+ * odstraneni vsech prvku user stories vyberu
+ */
+traineeApp.view.prototype.USListRemove = function(){
     $('#vote-wait').remove();
     $('#smUSList-btn').remove();
     $('#USList').remove();
@@ -45,9 +61,9 @@ view.prototype.USListRemove = function(){
 /**
  * vytvoreni listu pro vyber US
  * @param us user stories k vyberu
- * @param app scope traineeApp.core
+ * @param app scope jadra aplikace pro odesilani zprav na server
  */
-view.prototype.USList = function(us, app){
+traineeApp.view.prototype.USList = function(us, app){
     this.USListRemove();
     $('#content').append('<button id="smUSList-btn">request userStories</button>');
     $('#smUSList-btn').click(function(){
@@ -55,8 +71,7 @@ view.prototype.USList = function(us, app){
     });
     $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
     for (var key in us){
-        // desc promenna pro zlepseni citelnosti vyrazu
-        var desc = us[key].description;
+        var desc = us[key].description; // kvuli citelnosti nadchazejiciho vyrazu 
         $('#USList').append('<tr><td>'+us[key].titleID+
                             '</td><td>'+us[key].title+
                             '</td><td>'+us[key].type+
@@ -64,7 +79,6 @@ view.prototype.USList = function(us, app){
                             '</td><td><button class="USbtn" value="'+us[key].titleID+'">select</button></td></tr>');
     }
     $('.USbtn').click(function(){
-        var bt = $(this).val();
-        app.io.emit('userstories-id', {team: app.user.team, usid: bt});
+        app.io.emit('userstories-id', {team: app.user.team, usid: $(this).val()});
     });
 };

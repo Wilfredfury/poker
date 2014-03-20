@@ -1,4 +1,5 @@
 /**
+ * modul pro komunikaci se serverem
  * Created by balicekt on 12/03/14.
  */
 var model = function(){
@@ -7,11 +8,11 @@ var model = function(){
 	this.load();
 };
 
-model.prototype.setUsers = function(users) {
+model.prototype.setUsers = function(users){
 	this.users = users;
 };
 
-model.prototype.setUserStories = function(us) {
+model.prototype.setUserStories = function(us){
 	this.userStories = us;
 };
 
@@ -90,39 +91,55 @@ model.prototype.load = function(){
 	this.setUserStories(userStories);
 };
 
-model.prototype.isRegistered = function (email) {
-    for (var key in this.users) {
+model.prototype.isRegistered = function(email){
+    for (var key in this.users){
         if (this.users[key].email === email){
             return {success: true, data: this.users[key]};
         }
     }
     return {success: false};
 };
-
-model.prototype.getRole = function (email){
-    for (var key in this.users) {
-        if (this.users[key].email === email) {
-            return this.users[key].role;            
+/**
+ * vrati roli uzivatele podle mailu(bran jako ID)
+ * @param email mail uzivatele
+ * @returns string - role uzivatele
+ */
+model.prototype.getRole = function(email){
+    for (var key in this.users){
+        if (this.users[key].email === email){
+            return this.users[key].role;
         }
     }
 };
 
 /**
- * vrati vsechny us sm teamu
+ * vrati vsechny user stories teamu
  * @param team - team pro vybrani user stories
+ * @returns object - seznam user stories daneho tymu
  * */
-model.prototype.getUSList = function (team){
-    for(var key in this.userStories){
-        if (this.userStories[key].team === team) {
+model.prototype.getUSList = function(team){
+    for (var key in this.userStories){
+        if (this.userStories[key].team === team){
             return this.userStories[key].us;
         }
     }
 };
 
-model.prototype.getUS = function (usl,titleID){
-    for(var key in usl){
-        if (usl[key].titleID === titleID){
-            return usl[key];
+/**
+ * vrati jednu US z listu podle ID
+ * @param team - tym hledane user story 
+ * @param titleID  - ID hledane user story
+ * @returns object - user story ze seznamu podle ID
+ */
+model.prototype.getUS = function (team,titleID){
+    for (var key in this.userStories){
+        if (this.userStories[key].team === team){
+            for (var keyIn in usl){
+                if (usl[keyIn].titleID === titleID){
+                    return usl[keyIn];
+                }
+            }
+            return;
         }
     }
 };
