@@ -24,17 +24,15 @@ app.io.route('login-request', function(req) {
   }
   //console.log(server.getUserList()); // vypis aktualnich uzivatelu
 
-	// vraceni odpovedi na clienta
-	req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
+  // vraceni odpovedi na clienta
+  req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
 });
 
-app.io.route("smUSList-request",function(req){
+app.io.route("smUSList-request", function(req) {
   req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
 });
 
-// req.data.mail = mail hlasujiciho, req.data.value = hodnota hlasovani
-app.io.route('valueCards-request', function(req){
-  req.io.emit('valueCards-response', req.data.value);
+
 });
 
 app.io.route('startVote-request', function(req) {
