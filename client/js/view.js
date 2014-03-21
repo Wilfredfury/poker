@@ -2,6 +2,7 @@
  * funkce pro zobrazeni
  * Created by balicekt on 13/03/14.
  */
+var traineeApp = traineeApp || {};
 
 traineeApp.view = function(){
     this.showing = []; //pole pro zobrazovani specificke zpravy pouze jednou podle textu ? pridat generaci IDzpravy ?
@@ -52,8 +53,6 @@ traineeApp.view.prototype.flashMsg = function(elID, text, type, hide){
 /**
  * odstraneni vsech prvku user stories vyberu
  */
-var traineeApp = traineeApp || {};
-
 traineeApp.view.prototype.USListRemove = function(){
     $('#vote-wait').remove();
     $('#smUSList-btn').remove();

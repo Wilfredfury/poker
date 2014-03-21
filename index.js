@@ -26,7 +26,7 @@ app.io.route('login-request', function(req){
 });
 
 app.io.route("smUSList-request",function(req){
-    req.io.emit('smUSList-response', modelInstance.getUSList(req.data.team));
+    req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
 });
 
 app.io.route('startVote-request', function(req){
