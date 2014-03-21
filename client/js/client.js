@@ -5,7 +5,7 @@
 // vsechny dalsi "tridy" prefixovat "traineeApp". snizi se tim sance,
 // ze se prepise jiny JS. kvuli definici traineeApp musi byt vzby tento soubor
 // prvni me JS na clientu
-var traineeApp = {};
+var traineeApp = traineeApp || {};
 
 traineeApp.Core = function(){
     this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni
@@ -69,7 +69,7 @@ traineeApp.Core.prototype.initListeners = function(loginID){
     });
 
     this.io.on('smUSList-response', function(data){
-        _this.view.USList(data, _this);
+        _this.view.USList(data, _this.io, _this.user.team);
         _this.view.flashMsg("flashMsg", JSON.stringify(data), traineeApp.view.messageTypes.info, 2000);
     });
 };

@@ -29,7 +29,7 @@ app.io.route("smUSList-request",function(req){
     req.io.emit('smUSList-response', modelInstance.getUSList(req.data.team));
 });
 
-app.io.route('userstories-id', function(req){
+app.io.route('startVote-request', function(req){
     server.addUSList(req.data.team, req.data.usid);
     console.log(server.getUSList());
 });

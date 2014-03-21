@@ -139,7 +139,7 @@ model.prototype.getUS = function (team,titleID){
                     return usl[keyIn];
                 }
             }
-            return;
+            return ;
         }
     }
 };
