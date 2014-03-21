@@ -12,7 +12,8 @@ traineeApp.Core = function(){
     this.emailEl = $('#login-email'); // textove pole pro mail
     this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
     this.contentEl = $('#content'); // hlavni prvek pro obsah
-    this.io = io.connect();
+    this.io = io.connect(); // socket spojeni uzivatele
+    this.user = {}; // info o uzivateli
     this.view = new traineeApp.view();
 };
 
@@ -66,7 +67,6 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             _this.view.flashMsg("flashMsg", "user not found!", traineeApp.view.messageTypes.error, 2000);
         }
     });
-    
     this.io.on('smUSList-response', function(data){
         _this.view.USList(data, _this.io, _this.user.team);
         _this.view.flashMsg("flashMsg", JSON.stringify(data), traineeApp.view.messageTypes.info, 2000);

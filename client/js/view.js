@@ -53,6 +53,7 @@ traineeApp.view.prototype.flashMsg = function(elID, text, type, hide){
 /**
  * odstraneni vsech prvku user stories vyberu
  */
+
 traineeApp.view.prototype.USListRemove = function(){
     $('#vote-wait').remove();
     $('#smUSList-btn').remove();
