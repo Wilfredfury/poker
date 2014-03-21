@@ -1,9 +1,5 @@
 node_modules
 .settings
 .project
-<<<<<<< HEAD
 *.orig
 .idea
-=======
-*.orig
->>>>>>> [us32280] oprava index,server a tak dal
