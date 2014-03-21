@@ -4,9 +4,7 @@ exports.USList = {}; // uklada info o aktivnich US pro hlasovani.
 
 /**
  * vlozeni noveho uzivatele do seznamu prihlasenych uzivatelu
- * 
- * @param userid -
- *          mail vkladaneho uzivatele
+ * @param userid - mail vkladaneho uzivatele
  */
 exports.addUserList = function(req) {
   var oUser = modelInstance.isRegistered(req.session.user).data;
@@ -22,13 +20,8 @@ exports.addUserList = function(req) {
 
 /**
  * ziskani prihlasenych uzivatelu
- * 
  * @returns object - list uzivatelu
  */
-exports.getUserList = function() {
-  return exports.usersList;
-};
-
 exports.getOnline = function(team) {
   return exports.usersList[team];
 };
@@ -44,7 +37,7 @@ exports.getUserSocket = function(userTeam, userMail) {
 };
 /**
  * vlozeni nove user story hlasovani do seznamu aktivnich hlasovani
- * 
+ *
  * @param team -
  *          tym vkladane user story
  * @param usid -
@@ -56,7 +49,7 @@ exports.addUSList = function(team, usid) {
 
 /**
  * ziskani aktivnich hlasovani user stories
- * 
+ *
  * @returns object - list user stories hlasovani
  */
 exports.getUSList = function() {
