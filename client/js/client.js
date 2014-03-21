@@ -5,7 +5,7 @@
 // vsechny dalsi "tridy" prefixovat "traineeApp". snizi se tim sance,
 // ze se prepise jiny JS. kvuli definici traineeApp musi byt vzby tento soubor
 // prvni me JS na clientu
-var traineeApp = {};
+var traineeApp = traineeApp || {};
 
 traineeApp.Core = function(){
     this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni

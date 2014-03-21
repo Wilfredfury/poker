@@ -1,6 +1,7 @@
 /**
  * Created by balicekt on 13/03/14.
  */
+var traineeApp = traineeApp || {};
 
 traineeApp.user = function(user){
     this.email = user.email;

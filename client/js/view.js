@@ -21,8 +21,8 @@ traineeApp.view.messageTypes = {
  * zobrazeni prihlasovacich udaju a vyzvu k cekani na hlasovani
  * @param app - scope jadra aplikace pro pristup k informacim o uzivateli
  */
-traineeApp.view.prototype.login = function(app){
-    app.contentEl.append("<p id='login-info'>logged in as <b>"+
+traineeApp.view.prototype.login = function(){
+    $('#content').append("<p id='login-info'>logged in as <b>"+
                           app.user.name+"</b> in team <b>"+
                           app.user.team+"</b><br></p><p id='vote-wait'> please wait for vote to start...</p>");  
 };
@@ -52,6 +52,8 @@ traineeApp.view.prototype.flashMsg = function(elID, text, type, hide){
 /**
  * odstraneni vsech prvku user stories vyberu
  */
+var traineeApp = traineeApp || {};
+
 traineeApp.view.prototype.USListRemove = function(){
     $('#vote-wait').remove();
     $('#smUSList-btn').remove();
@@ -63,11 +65,11 @@ traineeApp.view.prototype.USListRemove = function(){
  * @param us user stories k vyberu
  * @param app scope jadra aplikace pro odesilani zprav na server
  */
-traineeApp.view.prototype.USList = function(us, app){
+traineeApp.view.prototype.USList = function(us, appio, appteam){
     this.USListRemove();
     $('#content').append('<button id="smUSList-btn">request userStories</button>');
     $('#smUSList-btn').click(function(){
-        app.io.emit("smUSList-request",app.user);
+        appio.emit("smUSList-request",appteam);
     });
     $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
     for (var key in us){
@@ -79,6 +81,6 @@ traineeApp.view.prototype.USList = function(us, app){
                             '</td><td><button class="USbtn" value="'+us[key].titleID+'">select</button></td></tr>');
     }
     $('.USbtn').click(function(){
-        app.io.emit('userstories-id', {team: app.user.team, usid: $(this).val()});
+        appio.emit('startVote-request', {team: appteam, usid: $(this).val()});
     });
 };
