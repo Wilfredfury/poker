@@ -24,18 +24,19 @@ app.io.route('login-request', function(req) {
   }
   //console.log(server.getUserList()); // vypis aktualnich uzivatelu
 
-  // vraceni odpovedi na clienta
-  req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
+	// vraceni odpovedi na clienta
+	req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
 });
 
-app.io.route("smUSList-request", function(req) {
-  req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
+app.io.route("smUSList-request",function(req){
+    req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
 });
 
 
 });
 
 app.io.route('startVote-request', function(req) {
+  console.log("zacatek");
   server.addUSList(req.data.team, req.data.usid);
 //  console.log(req.data.team);
   var teamList = server.getOnline(req.data.team);

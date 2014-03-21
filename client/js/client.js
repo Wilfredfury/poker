@@ -7,14 +7,24 @@
 // prvni me JS na clientu
 var traineeApp = traineeApp || {};
 
-traineeApp.Core = function() {
-  this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni
-  this.emailEl = $('#login-email'); // textove pole pro mail
-  this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
-  this.contentEl = $('#content'); // hlavni prvek pro obsah
-  this.io = io.connect(); // socket spojeni uzivatele
-  this.user = {}; // info o uzivateli
-  this.view = new traineeApp.view();
+traineeApp.Core = function(){
+    this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni
+    this.emailEl = $('#login-email'); // textove pole pro mail
+    this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
+    this.contentEl = $('#content'); // hlavni prvek pro obsah
+    this.cardsEl = null;
+    this.io = io.connect(); // socket spojeni uzivatele
+    this.user = {}; // info o uzivateli
+    this.view = new traineeApp.view();
+    this.cardsEl = null;
+};
+
+traineeApp.Core.elementCl = {
+  cardsEl: '.cards',
+  formEl: '#login-form', // hlavni prvek formu pro prihlaseni
+  emailEl: '#login-email', // textove pole pro mail
+  submitEl: '#login-submit', // tlacitko pro odeslani mailu
+  contentEl: '#content'
 };
 
 //traineeApp.Core.elementCl = {
@@ -28,10 +38,10 @@ traineeApp.Core = function() {
 /**
  * inicializace aplikace
  */
-traineeApp.Core.prototype.init = function() {
-  var loginID = 'traineeAppmail';
-  this.initListeners(loginID);
-  this.sendLogin(loginID);
+traineeApp.Core.prototype.init = function(){
+    var loginID = 'traineeAppmail';
+	this.initListeners(loginID);
+	this.sendLogin(loginID);
 };
 
 /**
@@ -65,26 +75,39 @@ traineeApp.Core.prototype.sendLogin = function(loginID) {
  * 
  * @param loginID -
  *          prvek v localStorage kam je ukladana hodnota prihlaseni
+ *
+ * @param loginID -
+ *          prvek v localStorage kam je ukladana hodnota prihlaseni
  */
-traineeApp.Core.prototype.initListeners = function(loginID) {
-  var _this = this;
-  // hlidani odpovedi ze serveru a zmena html
-  this.io.on('login-response', function(data) {
-    if (data.success) {
-      _this.user = new traineeApp.user(data.data);
-      localStorage.setItem(loginID, _this.user.email);
-      _this.formEl[0].hidden = true;
-      _this.view.flashMsg("flashMsg", "successfuly logged in!",
-          traineeApp.view.messageTypes.success, 5000);
-      _this.view.login();
-      if (_this.user.role == traineeApp.user.roleTypes.sm) {
-        _this.io.emit("smUSList-request", _this.user.team);
-      }
-    } else {
-      _this.view.flashMsg("flashMsg", "user not found!",
-          traineeApp.view.messageTypes.error, 5000);
-    }
-  });
+traineeApp.Core.prototype.initListeners = function(loginID){
+    var _this = this;
+    // hlidani odpovedi ze serveru a zmena html
+    this.io.on('login-response', function(data){
+        if (data.success){
+            _this.user = new traineeApp.user(data.data);
+            localStorage.setItem(loginID, _this.user.email);
+            _this.formEl[0].hidden = true;
+            _this.view.flashMsg("flashMsg", "successfuly logged in!", traineeApp.view.messageTypes.success, 2000);
+            _this.view.login();
+            if (_this.user.role == traineeApp.user.roleTypes.sm){
+              // tady je sm
+                _this.io.emit("smUSList-request", _this.user.team);
+            }else{
+              // tady je klient
+              // posle posle hodnotu hlasovani na server
+             // _this.io.emit(" ", traineeApp.Core.getCardsValue());
+            }
+        } else{
+            _this.view.flashMsg("flashMsg", "user not found!", traineeApp.view.messageTypes.error, 2000);
+        }
+    });
+    this.io.on('smUSList-response', function(data){
+        _this.view.USList(data, _this.io, _this.user.team);
+        _this.view.flashMsg("flashMsg", JSON.stringify(data), traineeApp.view.messageTypes.info, 2000);
+        _this.view.getCards();
+        _this.cardsEl = $(traineeApp.Core.elementCl.cardsEl);
+        _this.getCardsValue();
+    });
 
   this.io.on('smUSList-response', function(data) {
     _this.view.USList(data, _this.io, _this.user.team);
@@ -95,4 +118,13 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
   this.io.on('startVote-response', function(data) {
     _this.view.startVote(data);
   });
+
+};
+
+traineeApp.Core.prototype.getCardsValue = function(){
+  this.cardsEl.click(function(){
+    var valueCards = $(this).attr("data-value");
+    return valueCards;
+ //   alert(valueCards);
+   });
 };
