@@ -1,30 +1,33 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<!-- socket.io pro komunikaci -->
-		<script src="socket.io/socket.io.js"></script>
-		<!-- cesta k js souborum z ./client . cely adresar client je pridan na serveru -->
-		<script src="js/jquery-1.7.1.min.js"></script>
-		<script src="js/client.js"></script>
-		<script src="js/user.js"></script>
-		<script src="js/view.js"></script>
+<head>
+    <!-- socket.io pro komunikaci -->
+    <script src="socket.io/socket.io.js"></script>
+    <!-- cesta k js souborum z ./client . cely adresar client je pridan na serveru -->
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="js/client.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/view.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="css/main.css" />
-	</head>
-	<body>
-   		<div id="flashMsg"></div>
-   		<div id="container">     
-			        <form name="login-form" id="login-form" hidden>
-			            enter login email:<input type="email" id="login-email" required>
-			            <input type="submit" id="login-submit">
-			        </form>
-		        </div>      
-	</body>
-	<script type="text/javascript">
-		var app = new traineeApp.Core();
-		$(document).ready( function(){
-			// inicializace hlidani odeslani formulare
-			app.init.call(app);
-		});
-	</script>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+</head>
+<body>
+<div id="flashMsg"></div>
+<div id="container">
+    <div id="content">
+    <form name="login-form" id="login-form" hidden>
+        <input placeholder="Email login" type="email" id="login-email" required>
+        <br />
+        <input type="submit" id="login-submit" class="button">
+    </form>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var app = new traineeApp.Core();
+    $(document).ready(function () {
+        // inicializace hlidani odeslani formulare
+        app.init.call(app);
+    });
+</script>
 </html>

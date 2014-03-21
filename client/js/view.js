@@ -23,9 +23,9 @@ traineeApp.view.messageTypes = {
  * @param app - scope jadra aplikace pro pristup k informacim o uzivateli
  */
 traineeApp.view.prototype.login = function(){
-    $('#content').append("<p id='login-info'>logged in as <b>"+
-                          app.user.name+"</b> in team <b>"+
-                          app.user.team+"</b><br></p><p id='vote-wait'> please wait for vote to start...</p>");  
+    $('#content').append("<div id='login-info'>logged in as <span class='bold'>"+
+                          app.user.name+"</span> in team <span class='bold'>"+
+                          app.user.team+"</span><br></p><p id='vote-wait'> please wait for vote to start...</div>");
 };
 
 /**
@@ -67,11 +67,11 @@ traineeApp.view.prototype.USListRemove = function(){
  */
 traineeApp.view.prototype.USList = function(us, appio, appteam){
     this.USListRemove();
-    $('#content').append('<button id="smUSList-btn">request userStories</button>');
+    $('#content').append('<button class="button" id="smUSList-btn">request userStories</button>');
     $('#smUSList-btn').click(function(){
         appio.emit("smUSList-request",appteam);
     });
-    $('#content').append('<table id="USList" align="center" border="0"><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><tr></table>');
+    $('#content').append('<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
     for (var key in us){
         var desc = us[key].description; // kvuli citelnosti nadchazejiciho vyrazu 
         $('#USList').append('<tr><td>'+us[key].titleID+
