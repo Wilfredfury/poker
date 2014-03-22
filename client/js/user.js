@@ -1,16 +1,16 @@
 /**
- * Created by balicekt on 13/03/14.
+ * Informace o uzivateli
  */
 var traineeApp = traineeApp || {};
 
-traineeApp.user = function(user) {
+traineeApp.User = function(user) {
   this.email = user.email;
   this.role = user.role;
   this.team = user.team;
   this.name = user.name;
 };
 
-traineeApp.user.roleTypes = {
+traineeApp.User.roleTypes = {
   dev : 'developer',
   sm : 'SCRUMmaster'
 };
