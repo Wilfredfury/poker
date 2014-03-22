@@ -36,23 +36,30 @@ app.io.route("smUSList-request",function(req){
 });
 
 app.io.route('startVote-request', function(req) {
-  console.log("zacatek");
   server.addUSList(req.data.team, req.data.usid);
-//  console.log(req.data.team);
   var teamList = server.getOnline(req.data.team);
-  console.log(teamList);
   for ( var key in teamList) {
     var usReq = server.getUserSocket(req.data.team, key);
-    console.log(usReq);
     if (usReq !== undefined) {
       usReq.io.emit('startVote-response', modelInstance.getUS(
           req.data.team, req.data.usid));
     }
   }
-//  console.log(server.getUserList()); // vypis aktualnich uzivatelu
-//  console.log(server.getUSList());
 });
 
+app.io.route('valueVote-request', function(req) {
+  var voteVal = '5';
+  var userVote ='tomas.roch@socialbakers.com';
+  userVote = modelInstance.getUser(userVote);
+  var smSocket = server.getSmSocket(userVote.team);
+  smSocket.io.emit('valueVote-response', {voted:voteVal, votedName:userVote.name});
+  setTimeout(function(){
+    smSocket.io.emit('valueVote-response', {voted: '8', votedName:'Tomas Balicek'});    
+  },2000);
+  setTimeout(function(){
+    smSocket.io.emit('valueVote-response', {voted: '13', votedName:userVote.name});    
+  },4000);
+});
 // spusteni aplikace na portu 4987
 console.log('listen at localhost:4987');
 app.listen(4987);

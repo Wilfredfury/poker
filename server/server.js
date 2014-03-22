@@ -35,6 +35,15 @@ exports.getUserSocket = function(userTeam, userMail) {
     }
   }
 };
+
+exports.getSmSocket = function(userTeam) {
+  for ( var key in this.usersList[userTeam]) {
+    if (this.usersList[userTeam][key].role == model.model.roleTypes.sm) {
+      return this.usersList[userTeam][key].socket;
+    }
+  }
+};
+
 /**
  * vlozeni nove user story hlasovani do seznamu aktivnich hlasovani
  *

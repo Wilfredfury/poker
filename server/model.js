@@ -7,6 +7,11 @@ var model = function() {
   this.load();
 };
 
+model.roleTypes = {
+    dev : 'developer',
+    sm : 'SCRUMmaster'
+};
+
 model.prototype.setUsers = function(users) {
   this.users = users;
 };
@@ -90,6 +95,15 @@ model.prototype.isRegistered = function(email) {
     success : false
   };
 };
+
+model.prototype.getUser = function(email) {
+  for ( var key in this.users) {
+    if (this.users[key].email === email) {
+      return this.users[key];
+    }
+  }
+};
+
 /**
  * vrati roli uzivatele podle mailu(bran jako ID)
  * 

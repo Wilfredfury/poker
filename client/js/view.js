@@ -65,6 +65,11 @@ traineeApp.view.prototype.USListRemove = function() {
   $('#USList').remove();
 };
 
+
+traineeApp.view.prototype.clear = function() {
+  $('#content').empty();
+};
+
 /**
  * vytvoreni listu pro vyber US
  * 
@@ -83,11 +88,25 @@ traineeApp.view.prototype.USList = function(us, appio, appteam){
 };
 
 traineeApp.view.prototype.startVote = function(us) {
-  $('#vote-wait').remove();
-  $('#content').append(
-      '<p id="usVoteInfo">' + us.title + ' ' + us.description + '</p>');
+  this.clear();
+  $('#content').append('<p id="usVoteInfo">' + us.title + ' ' + us.description + '</p>');
 };
 
+traineeApp.view.prototype.valueVote = function(votes) {
+  this.clear();
+  var med = 0;
+  var num = 0;
+  var rows = '<thead><tr><th>user</th><th>value</th></tr></thead><tbody>';
+  $('#content').append('<table id="voteTable" align="center" border="0"></table>');
+  for (var key in votes){
+      num++;
+      med += votes[key];
+      rows += '<tr><td>'+key+'<td></td><td>'+votes[key]+'</td></tr>';
+  }
+  med = med/num;
+  rows += '</tbody><tfoot><tr><td colspan="2">'+((Math.round(med) == med) ?  med : med.toFixed(2))+'</td></tr></tfoot>';
+  $('#voteTable').append(rows);
+};
 
 traineeApp.view.prototype.getCards = function(){
   var number = ["1","2","3","5","8","13","21","34"];
@@ -102,4 +121,4 @@ traineeApp.view.prototype.getCards = function(){
   }
   $('#content').append('<li class="cards" value="?">?</li>');
   $('#content').append('</ul>');
-}
+};
