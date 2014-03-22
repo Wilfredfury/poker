@@ -16,6 +16,7 @@ traineeApp.Core = function(){
     this.io = io.connect(); // socket spojeni uzivatele
     this.user = {}; // info o uzivateli
     this.view = new traineeApp.view();
+    this.votes = {};
     this.cardsEl = null;
 };
 
@@ -34,6 +35,7 @@ traineeApp.Core.prototype.init = function(){
     var loginID = 'traineeAppmail';
 	this.initListeners(loginID);
 	this.sendLogin(loginID);
+
 };
 
 /**
@@ -93,24 +95,34 @@ traineeApp.Core.prototype.initListeners = function(loginID){
             _this.view.flashMsg("flashMsg", "user not found!", traineeApp.view.messageTypes.error, 2000);
         }
     });
-    this.io.on('smUSList-response', function(data){
-        _this.view.USList(data, _this.io, _this.user.team);
-        _this.view.flashMsg("flashMsg", JSON.stringify(data), traineeApp.view.messageTypes.info, 2000);
-        _this.view.getCards();
-        _this.cardsEl = $(traineeApp.Core.elementCl.cardsEl);
-        _this.getCardsValue();
-    });
 
   this.io.on('smUSList-response', function(data) {
     _this.view.USList(data, _this.io, _this.user.team);
-    _this.view.flashMsg("flashMsg", JSON.stringify(data),
-        traineeApp.view.messageTypes.info, 5000);
+    _this.initVoteButtons();
   });
 
   this.io.on('startVote-response', function(data) {
     _this.view.startVote(data);
+    _this.cardsEl = $(traineeApp.Core.elementCl.cardsEl);
+    _this.view.getCards();
+    _this.getCardsValue();
+    _this.io.emit('valueVote-request', {voted:'5', userVote:'tomas.roch@socialbakers.com'});
+    _this.view.clear();
   });
+  
+  this.io.on('valueVote-response', function(data) {
+    _this.votes[data.votedName] = Number(data.voted);
+    _this.view.valueVote(_this.votes);
+  });
+};
 
+traineeApp.Core.prototype.initVoteButtons = function(){
+  var _this = this; 
+  $('.USbtn').click(function(){
+    _this.votes = {};
+    _this.view.clear();
+    _this.io.emit('startVote-request', {team: _this.user.team, usid: $(this).val()});
+  });
 };
 
 traineeApp.Core.prototype.getCardsValue = function(){
