@@ -12,7 +12,6 @@ traineeApp.Core = function(){
     this.emailEl = $('#login-email'); // textove pole pro mail
     this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
     this.contentEl = $('#content'); // hlavni prvek pro obsah
-    this.cardsEl = null;
     this.io = io.connect(); // socket spojeni uzivatele
     this.user = {}; // info o uzivateli
     this.view = new traineeApp.view();
