@@ -101,17 +101,12 @@ traineeApp.view.prototype.startVote = function(us) {
 
 
 traineeApp.view.prototype.Cards = function(email, appio){
-  var number = ["1","2","3","5","8","13","21","34"];
-  var i = 0;
+  var number = ["1","2","3","5","8","13","21","34", "?"];
+
   $('#content').append('<ul>');
-  while(i < number.length){
-    for(var y = i; y < (i+3); y++){
-      $('#content').append('<li class="cards" data-value="'+number[y]+'">'+number[y]+'</li>');
-      if(y === (number.length-1)) break;
-    }
-    i += 3;
+  for(var i in number){
+    $('#content').append('<li class="cards" data-value="'+number[i]+'">'+number[i]+'</li>');
   }
-  $('#content').append('<li class="cards" data-value="?">?</li>');
   $('#content').append('</ul>');
 
   $('.cards').click(function(){
