@@ -10,8 +10,8 @@ var traineeApp = traineeApp || {};
 traineeApp.Core = function() {
   this.io = io.connect(); // socket spojeni uzivatele
   this.user = {}; // info o uzivateli
-  this.view = new traineeApp.View();
-  this.votes = {};
+  this.view = new traineeApp.View(); // view jadra
+  this.votes = {}; // pro SM ulozeni hlasovani
 };
 
 /**
@@ -32,10 +32,10 @@ traineeApp.Core.prototype.sendLogin = function(loginID) {
   var email = "";
   var _this = this;
   if (localStorage.getItem(loginID) === null) {
-    this.formEl.show();
-    this.formEl.submit(function(event) {
+    this.view.formEl.show();
+    this.view.formEl.submit(function(event) {
       event.preventDefault();
-      email = _this.emailEl.val();
+      email = _this.view.emailEl.val();
       _this.io.emit('login-request', {
         mail : email
       });
@@ -62,9 +62,10 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
       localStorage.setItem(loginID, _this.user.email);
       _this.view.login();
       _this.view.flashMsg("flashMsg", "successfuly logged in!", traineeApp.View.messageTypes.success, 5000);
-
       if (_this.user.role == traineeApp.User.roleTypes.sm) {
         _this.io.emit("usList-request", _this.user.team);
+      } else {
+        _this.view.wait();
       }
     } else {
       _this.view.flashMsg("flashMsg", "user not found!", traineeApp.View.messageTypes.error, 5000);
@@ -73,40 +74,29 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
 
   this.io.on('usList-response', function(data) {
     _this.view.usList(data);
-    _this.initUSList();
-  });
-
-  this.io.on('valueCards-response', function(data) {
-    _this.view.flashMsg("flashMsg", "Odhlasovano: " + data, traineeApp.View.messageTypes.info, 5000);
+    _this.initUSListButtons();
   });
 
   this.io.on('startVote-response', function(data) {
     _this.view.startVote(data);
-    _this.cardsEl = $(traineeApp.Core.elementCl.cardsEl);
-    _this.view.getCards();
-    _this.getCardsValue();
-    _this.io.emit('valueVote-request', {
-    voted : '5',
-    userVote : 'tomas.roch@socialbakers.com'
-    });
-    _this.view.clear();
+    _this.initVoteButtons();
   });
-
+  // posilano jen sm
   this.io.on('valueVote-response', function(data) {
     _this.votes[data.votedName] = Number(data.voted);
     _this.view.valueVote(_this.votes);
   });
 };
 
-traineeApp.Core.prototype.initUSList = function() {
+traineeApp.Core.prototype.initUSListButtons = function() {
   var _this = this;
-  $('#smUSList-btn').click(function(){
-    _this.io.emit("usList-request",_this.user.team);
-  });  
-  
+  $('#smUSList-btn').click(function() {
+    _this.io.emit("usList-request", _this.user.team);
+  });
+
   $('.USbtn').click(function() {
     _this.votes = {};
-    _this.view.clear();
+    _this.view.contentEl.empty();
     _this.io.emit('startVote-request', {
       team : _this.user.team,
       usid : $(this).val()
@@ -114,10 +104,12 @@ traineeApp.Core.prototype.initUSList = function() {
   });
 };
 
-traineeApp.Core.prototype.getCardsValue = function() {
-  this.cardsEl.click(function() {
-    var valueCards = $(this).attr("data-value");
-    return valueCards;
-    // alert(valueCards);
+traineeApp.Core.prototype.initVoteButtons = function() {
+  var _this = this;
+  $('.cards').click(function() {
+    _this.io.emit('valueVote-request', {
+      email : _this.user.email,
+      value : $(this).attr("data-value")
+    });
   });
 };
