@@ -1,5 +1,5 @@
 /**
- * modul pro komunikaci se serverem Created by balicekt on 12/03/14.
+ * Modul pro komunikaci se serverem
  */
 var model = function() {
   this.users = null;
@@ -8,8 +8,8 @@ var model = function() {
 };
 
 model.roleTypes = {
-    dev : 'developer',
-    sm : 'SCRUMmaster'
+  dev : 'developer',
+  sm : 'SCRUMmaster'
 };
 
 model.prototype.setUsers = function(users) {
@@ -86,8 +86,8 @@ model.prototype.isRegistered = function(email) {
   for ( var key in this.users) {
     if (this.users[key].email === email) {
       return {
-        success : true,
-        data : this.users[key]
+      success : true,
+      user : this.users[key]
       };
     }
   }
@@ -105,10 +105,8 @@ model.prototype.getUser = function(email) {
 };
 
 /**
- * vrati roli uzivatele podle mailu(bran jako ID)
- * 
- * @param email
- *          mail uzivatele
+ * vrati roli uzivatele podle mailu(bran jako ID) 
+ * @param email mail uzivatele
  * @returns string - role uzivatele
  */
 model.prototype.getRole = function(email) {
@@ -120,10 +118,8 @@ model.prototype.getRole = function(email) {
 };
 
 /**
- * vrati vsechny user stories teamu
- * 
- * @param team -
- *          team pro vybrani user stories
+ * vrati vsechny user stories teamu 
+ * @param team - team pro vybrani user stories
  * @returns object - seznam user stories daneho tymu
  */
 model.prototype.getUSList = function(team) {
@@ -136,11 +132,8 @@ model.prototype.getUSList = function(team) {
 
 /**
  * vrati jednu US z listu podle ID
- * 
- * @param team -
- *          tym hledane user story
- * @param titleID -
- *          ID hledane user story
+ * @param team - tym hledane user story
+ * @param titleID - ID hledane user story
  * @returns object - user story ze seznamu podle ID
  */
 model.prototype.getUS = function(team, titleID) {
@@ -157,9 +150,7 @@ model.prototype.getUS = function(team, titleID) {
 };
 /**
  * vrati vsechny cleny daneho tymu
- * 
- * @param team -
- *          hledany tym
+ * @param team - hledany tym
  * @returns array - clenove daneho tymu
  */
 model.prototype.getTeam = function(team) {

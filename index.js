@@ -22,17 +22,19 @@ app.io.route('login-request', function(req) {
   if (registered.success) {
     server.addUserList(req);
   }
-  //console.log(server.getUserList()); // vypis aktualnich uzivatelu
+  // console.log(server.getUserList()); // vypis aktualnich uzivatelu
 
-	// vraceni odpovedi na clienta
-	req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
+  // vraceni odpovedi na clienta
+  req.io.emit('login-response', modelInstance.isRegistered(req.session.user));
 });
 
-app.io.route("smUSList-request",function(req){
-    req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
+app.io.route("usList-request", function(req) {
+  req.io.emit('usList-response', modelInstance.getUSList(req.data));
 });
 
-
+// req.data.mail = mail hlasujiciho, req.data.value = hodnota hlasovani
+app.io.route('valueCards-request', function(req) {
+  req.io.emit('valueCards-response', req.data.value);
 });
 
 app.io.route('startVote-request', function(req) {
@@ -41,24 +43,36 @@ app.io.route('startVote-request', function(req) {
   for ( var key in teamList) {
     var usReq = server.getUserSocket(req.data.team, key);
     if (usReq !== undefined) {
-      usReq.io.emit('startVote-response', modelInstance.getUS(
-          req.data.team, req.data.usid));
+      usReq.io.emit('startVote-response', modelInstance
+          .getUS(req.data.team, req.data.usid));
     }
   }
 });
 
 app.io.route('valueVote-request', function(req) {
   var voteVal = '5';
-  var userVote ='tomas.roch@socialbakers.com';
+  var userVote = 'tomas.roch@socialbakers.com';
   userVote = modelInstance.getUser(userVote);
   var smSocket = server.getSmSocket(userVote.team);
-  smSocket.io.emit('valueVote-response', {voted:voteVal, votedName:userVote.name});
-  setTimeout(function(){
-    smSocket.io.emit('valueVote-response', {voted: '8', votedName:'Tomas Balicek'});    
-  },2000);
-  setTimeout(function(){
-    smSocket.io.emit('valueVote-response', {voted: '13', votedName:userVote.name});    
-  },4000);
+  
+  smSocket.io.emit('valueVote-response', {
+    voted : voteVal,
+    votedName : userVote.name
+  });
+  
+  setTimeout(function() {
+    smSocket.io.emit('valueVote-response', { 
+      voted : '8',
+      votedName : 'Tomas Balicek'
+    });
+  }, 2000);
+  
+  setTimeout(function() {
+    smSocket.io.emit('valueVote-response', {
+      voted : '13',
+      votedName : userVote.name
+    });
+  }, 4000);
 });
 // spusteni aplikace na portu 4987
 console.log('listen at localhost:4987');

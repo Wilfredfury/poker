@@ -1,26 +1,28 @@
 exports.usersList = {}; // uklada info o "prihlasenych" uzivatelych (otevrene
-// sockety).
+                        // sockety).
 exports.USList = {}; // uklada info o aktivnich US pro hlasovani.
 
 /**
  * vlozeni noveho uzivatele do seznamu prihlasenych uzivatelu
+ * 
  * @param userid - mail vkladaneho uzivatele
  */
 exports.addUserList = function(req) {
-  var oUser = modelInstance.isRegistered(req.session.user).data;
+  var oUser = modelInstance.isRegistered(req.session.user).user;
   if (!exports.usersList[oUser.team]) {
     exports.usersList[oUser.team] = {};
   }
   exports.usersList[oUser.team][oUser.email] = {
-    name : oUser.name,
-    role : oUser.role,
-    socket : req
+  name : oUser.name,
+  role : oUser.role,
+  socket : req
   };
 };
 
 /**
  * ziskani prihlasenych uzivatelu
- * @returns object - list uzivatelu
+ * 
+ * @return object - list uzivatelu
  */
 exports.getOnline = function(team) {
   return exports.usersList[team];
@@ -46,11 +48,9 @@ exports.getSmSocket = function(userTeam) {
 
 /**
  * vlozeni nove user story hlasovani do seznamu aktivnich hlasovani
- *
- * @param team -
- *          tym vkladane user story
- * @param usid -
- *          ID vkladane user story
+ * 
+ * @param team - tym vkladane user story
+ * @param usid - ID vkladane user story
  */
 exports.addUSList = function(team, usid) {
   exports.USList[team] = usid;
@@ -58,8 +58,8 @@ exports.addUSList = function(team, usid) {
 
 /**
  * ziskani aktivnich hlasovani user stories
- *
- * @returns object - list user stories hlasovani
+ * 
+ * @return object - list user stories hlasovani
  */
 exports.getUSList = function() {
   return exports.USList;
