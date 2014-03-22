@@ -10,35 +10,16 @@ traineeApp.View = function() {
   this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
   this.contentEl = $('#content'); // hlavni prvek pro obsah
   this.panelEl = $('#panel'); // hlavni prvek pro pro login
-  this.usListEl = $('#USList'); // list user stories pro hlasovani
-  this.voteTable = $('#voteTable'); // tabulka vysledku z klientu
-  this.cardsEl = $('.cards'); // tlacitka karet pro hlasovani
 };
 
 /**
  * vycet typu zprav
  */
 traineeApp.View.messageTypes = {
-warning : 'warning',
-success : 'success',
-error : 'error',
-info : 'info'
-};
-
-/**
- * zobrazeni prihlaseni uzivatele
- */
-traineeApp.View.prototype.login = function() {
-  this.formEl.hide();
-  this.panelEl.append("<div id='login-info'>logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></p></div>");
-};
-
-/**
- * zobrazeni vyzvy k cekani
- */
-traineeApp.View.prototype.wait = function() {
-  this.contentEl.empty();
-  this.contentEl.append("<p id='vote-wait'> please wait for vote to start...</p>");
+  warning : 'warning',
+  success : 'success',
+  error : 'error',
+  info : 'info'
 };
 
 /**
@@ -65,17 +46,32 @@ traineeApp.View.prototype.flashMsg = function(elID, text, type, hide) {
 };
 
 /**
+ * zobrazeni prihlaseni uzivatele
+ */
+traineeApp.View.prototype.login = function() {
+  this.formEl.hide();
+  this.panelEl.append("<div id='login-info'>logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></p></div>");
+};
+
+/**
+ * zobrazeni vyzvy k cekani
+ */
+traineeApp.View.prototype.wait = function() {
+  this.contentEl.empty();
+  this.contentEl.append("<p id='vote-wait'> please wait for vote to start...</p>");
+};
+
+/**
  * vytvoreni listu pro vyber US
  * 
  * @param us - user stories k vyberu
- * @param app - scope jadra aplikace pro odesilani zprav na server
  */
 traineeApp.View.prototype.usList = function(us) {
   this.contentEl.empty();
-  this.contentEl.append('<button class="button" id="smUSList-btn">request userStories</button><table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
+  this.contentEl.append('<button class="button" id="smUSList-btn">request us</button>' + '<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for ( var key in us) {
     var desc = us[key].description; // kvuli citelnosti nadchazejiciho vyrazu
-    this.usListEl.append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc.substr(0, Math.min(desc.length, 100)) + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
+    $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc.substr(0, Math.min(desc.length, 100)) + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
   }
 };
 
@@ -93,38 +89,26 @@ traineeApp.View.prototype.startVote = function(us) {
   }
   this.contentEl.append(content + '</ul>');
 };
-
 /**
- * zobrazovani vysledku pro scrummastera
+ * zobrazeni vysledku pro scrummastera
  * 
- * @param votes - dosavadni vysledky
+ * @param votes - {'jmeno' : 'hodnota'}
  */
-traineeApp.view.prototype.USList = function(us, appio, appteam){
-    this.USListRemove();
-    $('#content').append('<button id="smUSList-btn">request userStories</button>');
-    $('#smUSList-btn').click(function(){
-        appio.emit("smUSList-request",appteam);
-    });
-
-};
-
-traineeApp.view.prototype.startVote = function(us) {
-  this.clear();
-  $('#content').append('<p id="usVoteInfo">' + us.title + ' ' + us.description + '</p>');
-};
-
-traineeApp.view.prototype.valueVote = function(votes) {
-  this.clear();
+traineeApp.View.prototype.valueVote = function(votes) {
   var med = 0;
   var num = 0;
+  var dunno = '?'; // znak nahrazujici neohodnocene hlasovani us
   var content = '<thead><tr><th>user</th><th>value</th></tr></thead><tbody>';
-  this.contentEl.empty();
+  $('#voteTable').remove();
   this.contentEl.append('<table id="voteTable" class="table"></table>');
   for ( var key in votes) {
-    num++;
-    med += votes[key];
-    content += '<tr><td>' + key + '<td></td><td>' + votes[key] + '</td></tr>';
+    var nan = isNaN(votes[key]);
+    if (!nan) { // do prumeru jdou jen cisla
+      num++;
+      med += votes[key];
+    } // zobrazeni obsahu promenne dunno misto NaN
+    content += '<tr><td>' + key + '</td><td>' + ((nan) ? dunno : votes[key]) + '</td></tr>';
   }
-  med = med / num;
-  this.voteTableEl.append(content + '</tbody><tfoot><tr><td colspan="2">' + ((Math.round(med) == med) ? med : med.toFixed(2)) + '</td></tr></tfoot>');
+  med = med / num; // zobrazeni promenne dunno misto NaN, cela cisla bez setin
+  $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">' + ((isNaN(med)) ? dunno : ((Math.round(med) == med) ? med : med.toFixed(2))) + '</td></tr></tfoot>');
 };
