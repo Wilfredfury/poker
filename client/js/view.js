@@ -100,7 +100,7 @@ traineeApp.view.prototype.startVote = function(us) {
 };
 
 
-traineeApp.view.prototype.getCards = function(){
+traineeApp.view.prototype.Cards = function(email, appio){
   var number = ["1","2","3","5","8","13","21","34"];
   var i = 0;
   $('#content').append('<ul>');
@@ -111,6 +111,10 @@ traineeApp.view.prototype.getCards = function(){
     }
     i += 3;
   }
-  $('#content').append('<li class="cards" value="?">?</li>');
+  $('#content').append('<li class="cards" data-value="?">?</li>');
   $('#content').append('</ul>');
+
+  $('.cards').click(function(){
+    appio.emit('valueCards-request', {email: email, value: $(this).attr("data-value")});
+  });
 }

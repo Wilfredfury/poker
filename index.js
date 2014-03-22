@@ -29,13 +29,17 @@ app.io.route('login-request', function(req) {
 });
 
 app.io.route("smUSList-request",function(req){
-    req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
+  req.io.emit('smUSList-response', modelInstance.getUSList(req.data));
+});
+
+// req.data.mail = mail hlasujiciho, req.data.value = hodnota hlasovani
+app.io.route('valueCards-request', function(req){
+  req.io.emit('valueCards-response', req.data.value);
 });
 
 app.io.route('startVote-request', function(req) {
-  console.log("zacatek");
   server.addUSList(req.data.team, req.data.usid);
-  console.log(req.data.team);
+//  console.log(req.data.team);
   var teamList = server.getOnline(req.data.team);
   console.log(teamList);
   for ( var key in teamList) {
