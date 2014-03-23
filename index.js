@@ -16,57 +16,48 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
   }
   var registered = modelInstance.isRegistered(req.session.user);
   if (registered.success) {
-    server.addUserList(req);
+    server.addUser(req);
   }
-  // console.log(server.getUserList()); // vypis aktualnich uzivatelu
   req.io.emit('login-response', modelInstance.isRegistered(req.session.user)); // vraceni odpovedi na clienta
+  console.log(server.getUserList()); // vypis online uzivatelu
 });
 // 2. poslani seznamu us sm
 app.io.route("usList-request", function(req) {
   req.io.emit('usList-response', modelInstance.getUSList(req.data));
 });
+// (2). kontrola aktivniho hlasovani po prihlaseni
+app.io.route('loginVote-request', function(req) {
+  var userInfo = modelInstance.isRegistered(req.data).user;
+  var usInfo = server.getUS(userInfo.team);
+  if (usInfo) {
+    req.io.emit('startVote-response', modelInstance.getUS(userInfo.team, usInfo));
+  }
+});
 // 3. us zvolil us, poslani informaci o dane us vsem z tymu
 app.io.route('startVote-request', function(req) {
-  server.addUSList(req.data.team, req.data.usid);
-  var teamList = server.getOnline(req.data.team);
+  server.addUS(req.data.team, req.data.usid);
+  var teamList = server.getUsers(req.data.team);
   for ( var key in teamList) {
     var usReq = server.getUserSocket(req.data.team, key);
-    if (usReq !== undefined) {
+    if (usReq) {
       usReq.io.emit('startVote-response', modelInstance.getUS(req.data.team, req.data.usid));
     }
   }
+  console.log(server.getUSList()); // vypis aktivnich hlasovani
 });
 // 4. developeri posilaji sve hlasovani sm, sm pres to muze v budoucnu odeslat vysledek hlasovani
 app.io.route('valueVote-request', function(req) {
   userVote = modelInstance.getUser(req.data.email);
-  // if userVote.role == SM -> poslat na TP else tohle 
+  // if userVote.role == SM -> poslat na TP else tohle
   // z USListu vime, o kterou us se hlasuje podle userTeamu
-  var smSocket = server.getSmSocket(userVote.team);
-  if (smSocket !== undefined) {
-    smSocket.io.emit('valueVote-response', {
-      voted : req.data.value,
-      votedName : userVote.name
-    });
-// !dalsi emity jen pro visualizaci dat!
-    setTimeout(function() {
+  if (userVote.role != model.model.roleTypes.sm) {
+    var smSocket = server.getSmSocket(userVote.team);
+    if (smSocket) {
       smSocket.io.emit('valueVote-response', {
-        voted : '?',
-        votedName : 'Bezhlavy Jack'
-      });
-    }, 2000);
-
-    setTimeout(function() {
-      smSocket.io.emit('valueVote-response', {
-        voted : '13',
-        votedName : 'Bezruky Balu'
-      });
-    }, 4000);
-    setTimeout(function() {
-      smSocket.io.emit('valueVote-response', {
-        voted : '2',
+        voted : req.data.value,
         votedName : userVote.name
       });
-    }, 6000);
+    }
   }
 });
 // spusteni aplikace na portu 4987

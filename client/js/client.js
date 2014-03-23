@@ -9,9 +9,9 @@ var traineeApp = traineeApp || {};
 
 traineeApp.Core = function() {
   this.io = io.connect(); // socket spojeni uzivatele
-  this.user = {}; // info o uzivateli
   this.view = new traineeApp.View(); // view jadra
   this.votes = {}; // pro SM ulozeni hlasovani
+  this.user = {}; // info o uzivateli
 };
 
 /**
@@ -31,7 +31,7 @@ traineeApp.Core.prototype.init = function() {
 traineeApp.Core.prototype.sendLogin = function(loginID) {
   var email = "";
   var _this = this;
-  if (localStorage.getItem(loginID) === null) {
+  if (true) { // localStorage.getItem(loginID) === null ! kvuli testovani komunikace !
     this.view.formEl.show();
     this.view.formEl.submit(function(event) {
       event.preventDefault();
@@ -69,6 +69,7 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
         _this.io.emit("usList-request", _this.user.team);
       } else {
         _this.view.wait();
+        _this.io.emit('loginVote-request', _this.user.email);
       }
     } else {
       _this.view.flashMsg("flashMsg", "user not found!", traineeApp.View.messageTypes.error, 5000);
