@@ -1,10 +1,6 @@
 /**
  * Jadro aplikace
  */
-
-// vsechny dalsi "tridy" prefixovat "traineeApp". snizi se tim sance,
-// ze se prepise jiny JS. kvuli definici traineeApp musi byt vzby tento soubor
-// prvni me JS na clientu
 var traineeApp = traineeApp || {};
 
 traineeApp.Core = function() {
@@ -61,14 +57,14 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
       _this.user = new traineeApp.User(data.user);
       localStorage.setItem(loginID, _this.user.email);
       _this.view.login();
-      _this.view.flashMsg("flashMsg", "successfuly logged in!", traineeApp.View.messageTypes.success, 5000);
+      _this.view.flashMsg("flashMsg", "Successfuly logged in!", traineeApp.View.messageTypes.success, 5000);
       if (_this.user.role == traineeApp.User.roleTypes.sm) {
         _this.io.emit("usList-request", _this.user.team);
       } else {
         _this.view.wait();
       }
     } else {
-      _this.view.flashMsg("flashMsg", "user not found!", traineeApp.View.messageTypes.error, 5000);
+      _this.view.flashMsg("flashMsg", "User not found!", traineeApp.View.messageTypes.error, 5000);
     }
   });
 
@@ -86,8 +82,16 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
     _this.votes[data.votedName] = Number(data.voted);
     _this.view.valueVote(_this.votes);
   });
+
+  this.io.on('endVote-response', function(data) {
+    _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.info, 5000);
+    _this.view.wait();
+  });
 };
 
+/**
+ * inicializace tlacitek pro scrummastera
+ */
 traineeApp.Core.prototype.initUSListButtons = function() {
   var _this = this;
   $('#smUSList-btn').click(function() {
@@ -104,6 +108,9 @@ traineeApp.Core.prototype.initUSListButtons = function() {
   });
 };
 
+/**
+ * inicializace tlacitek pro hlasovani
+ */
 traineeApp.Core.prototype.initVoteButtons = function() {
   var _this = this;
   $('.cards').click(function() {

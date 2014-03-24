@@ -9,12 +9,9 @@ traineeApp.View = function() {
   this.emailEl = $('#login-email'); // textove pole pro mail
   this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
   this.contentEl = $('#content'); // hlavni prvek pro obsah
-  this.panelEl = $('#panel'); // hlavni prvek pro pro login
+  this.panelEl = $('#panel'); // hlavni prvek pro login
 };
 
-/**
- * vycet typu zprav
- */
 traineeApp.View.messageTypes = {
   warning : 'warning',
   success : 'success',
@@ -50,7 +47,7 @@ traineeApp.View.prototype.flashMsg = function(elID, text, type, hide) {
  */
 traineeApp.View.prototype.login = function() {
   this.formEl.hide();
-  this.panelEl.append("<div id='login-info'>logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></p></div>");
+  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></p></div>");
 };
 
 /**
@@ -58,7 +55,7 @@ traineeApp.View.prototype.login = function() {
  */
 traineeApp.View.prototype.wait = function() {
   this.contentEl.empty();
-  this.contentEl.append("<p id='vote-wait'> please wait for vote to start...</p>");
+  this.contentEl.append("<p id='vote-wait'> Please wait for vote to start...</p>");
 };
 
 /**
@@ -89,14 +86,15 @@ traineeApp.View.prototype.startVote = function(us) {
   }
   this.contentEl.append(content + '</ul>');
 };
+
 /**
  * zobrazeni vysledku pro scrummastera
  * 
  * @param votes - {'jmeno' : 'hodnota'}
  */
 traineeApp.View.prototype.valueVote = function(votes) {
-  var med = 0;
-  var num = 0;
+  var med = 0; // suma, po vypoctu prumer
+  var num = 0; // pocet hlasu
   var dunno = '?'; // znak nahrazujici neohodnocene hlasovani us
   var content = '<thead><tr><th>user</th><th>value</th></tr></thead><tbody>';
   $('#voteTable').remove();

@@ -1,3 +1,6 @@
+/**
+ * Jadro serveru s nastavenim poslechovych cest
+ */
 // express.io umoznujici komunikaci pres sockety
 express = require('express.io');
 server = require('./server/server.js');
@@ -45,12 +48,12 @@ app.io.route('startVote-request', function(req) {
   }
   console.log(server.getUSList()); // vypis aktivnich hlasovani
 });
-// 4. developeri posilaji sve hlasovani sm, sm pres to muze v budoucnu odeslat vysledek hlasovani
+// 4. developeri posilaji sve hlasovani sm, sm ukonci hlasovani
 app.io.route('valueVote-request', function(req) {
   userVote = modelInstance.getUser(req.data.email);
   // if userVote.role == SM -> poslat na TP else tohle
   // z USListu vime, o kterou us se hlasuje podle userTeamu
-  if (userVote.role != model.model.roleTypes.sm) {
+  if (userVote.role != model.model.roleTypes.sm) { // dev hlasuji
     var smSocket = server.getSmSocket(userVote.team);
     if (smSocket) {
       smSocket.io.emit('valueVote-response', {
@@ -58,6 +61,19 @@ app.io.route('valueVote-request', function(req) {
         votedName : userVote.name
       });
     }
+  } else { // SM konec hlasovani
+    var usID = server.getUS(userVote.team);
+    var usValue = req.data.value;
+    // TP.send(usID,usValue); zpracovani hodnoceni hlasovani
+    server.removeUS(userVote.team);
+    var teamList = server.getUsers(userVote.team);
+    for ( var key in teamList) {
+      var usReq = server.getUserSocket(userVote.team, key);
+      if (usReq && (usReq != req)) {
+        usReq.io.emit('endVote-response', usValue);
+      }
+    }
+    req.io.emit('usList-response', modelInstance.getUSList(userVote.team));
   }
 });
 // spusteni aplikace na portu 4987
