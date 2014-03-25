@@ -48,6 +48,10 @@ body {
     margin-bottom: 10px;
 }
 
+#vote-wait, #vote-info {
+    margin-bottom: 10px;
+}
+
 .bold {
     font-weight: bold;
 }

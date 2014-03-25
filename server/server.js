@@ -22,6 +22,17 @@ exports.addUser = function(req) {
 };
 
 /**
+ * odebrani uzivatele ze seznamu prihlasenych uzivatelu
+ * 
+ * @param user - objekt uzivatele, ktery ma byt odhlasen
+ */
+exports.removeUser = function(user) {
+  if (exports.usersList[user.team]) {
+    delete exports.usersList[user.team][user.email];
+  }
+};
+
+/**
  * ziskani prihlasenych uzivatelu daneho tymu
  * 
  * @param team - team hledanych uzivatelu

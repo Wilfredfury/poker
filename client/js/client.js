@@ -19,6 +19,12 @@ traineeApp.Core.prototype.init = function() {
   this.sendLogin(loginID);
 };
 
+traineeApp.Core.prototype.logout = function() {
+  if (this.user.email){
+    this.io.emit('logout-request', this.user.email);
+  }
+};
+
 /**
  * odeslani loginu na server prihlasenim nebo z localStorage
  * 
@@ -84,7 +90,12 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
   });
 
   this.io.on('endVote-response', function(data) {
-    _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.info, 5000);
+    _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.success, 5000);
+    _this.view.wait();
+  });
+  
+  this.io.on('endVoteError-response', function(data) {
+    _this.view.flashMsg("flashMsg", "The vote has ended without result because "+data, traineeApp.View.messageTypes.warning, 5000);
     _this.view.wait();
   });
 };
@@ -94,7 +105,7 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
  */
 traineeApp.Core.prototype.initUSListButtons = function() {
   var _this = this;
-  $('#smUSList-btn').click(function() {
+  $('#USListBtn').click(function() {
     _this.io.emit("usList-request", _this.user.team);
   });
 
@@ -108,15 +119,21 @@ traineeApp.Core.prototype.initUSListButtons = function() {
   });
 };
 
+
 /**
  * inicializace tlacitek pro hlasovani
  */
 traineeApp.Core.prototype.initVoteButtons = function() {
-  var _this = this;
+  var _this = this;  
+  $('#voteEndBtn').click(function(){
+    _this.io.emit('endVote-request', _this.user.email);
+  });
   $('.cards').click(function() {
+    var value = $(this).attr("data-value");
+    _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, 5000);    
     _this.io.emit('valueVote-request', {
       email : _this.user.email,
-      value : $(this).attr("data-value")
+      value : value
     });
   });
 };

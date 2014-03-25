@@ -13,10 +13,10 @@ traineeApp.View = function() {
 };
 
 traineeApp.View.messageTypes = {
-  warning : 'warning',
-  success : 'success',
-  error : 'error',
-  info : 'info'
+warning : 'warning',
+success : 'success',
+error : 'error',
+info : 'info'
 };
 
 /**
@@ -47,7 +47,7 @@ traineeApp.View.prototype.flashMsg = function(elID, text, type, hide) {
  */
 traineeApp.View.prototype.login = function() {
   this.formEl.hide();
-  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></p></div>");
+  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></div>");
 };
 
 /**
@@ -55,7 +55,7 @@ traineeApp.View.prototype.login = function() {
  */
 traineeApp.View.prototype.wait = function() {
   this.contentEl.empty();
-  this.contentEl.append("<p id='vote-wait'> Please wait for vote to start...</p>");
+  this.contentEl.append("<div id='vote-wait'><h3>Please wait for vote to start...</h3></div>");
 };
 
 /**
@@ -65,7 +65,7 @@ traineeApp.View.prototype.wait = function() {
  */
 traineeApp.View.prototype.usList = function(us) {
   this.contentEl.empty();
-  this.contentEl.append('<button class="button" id="smUSList-btn">request us</button>' + '<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
+  this.contentEl.append('<button class="button" id="USListBtn">request us</button>' + '<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for ( var key in us) {
     var desc = us[key].description; // kvuli citelnosti nadchazejiciho vyrazu
     $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc.substr(0, Math.min(desc.length, 100)) + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
@@ -79,12 +79,29 @@ traineeApp.View.prototype.usList = function(us) {
  */
 traineeApp.View.prototype.startVote = function(us) {
   var number = ["1", "2", "3", "5", "8", "13", "21", "34", "?" ];
-  var content = '<p id="usVoteInfo">' + us.title + ' ' + us.description + '</p><ul>';
+  var content = '';
+  var i = 0; // 
+  var inRow = 3; // po kolika kartach novy radek
   this.contentEl.empty();
-  for ( var i in number) {
-    content += '<li class="cards" data-value="' + number[i] + '">' + number[i] + '</li>';
+  if (app.user.role == traineeApp.User.roleTypes.sm) { // SM
+    this.contentEl.append('<button id="voteEndBtn" class="button">end vote</button>');
   }
-  this.contentEl.append(content + '</ul>');
+  this.contentEl.append('<div id="vote-info"><h3>' + us.title + '<br />' + us.description + '</h3></div><table id="cardsTable" class="table karty"></table>');
+  while (i < number.length) {
+    content += '<tr>';
+    for ( var j = i; j < (i + inRow); j++) {
+      content += '<td class="cards" data-value="' + number[j] + '">' + number[j] + '</td>';
+      if (j == (number.length - 1))
+        break;
+    }
+    content += '</tr>';
+    i += inRow;
+  }
+  $('#cardsTable').append(content);
+  /*
+   * jen list pro predelani pomoci css this.contentEl.append('<ul>'); for ( var i in number) { this.contentEl.append('<li class="cards" data-value="' + number[i] + '">' +
+   * number[i] + '</li>'); this.contentEl.append(content + '</ul>'); }
+   */
 };
 
 /**
@@ -96,7 +113,7 @@ traineeApp.View.prototype.valueVote = function(votes) {
   var med = 0; // suma, po vypoctu prumer
   var num = 0; // pocet hlasu
   var dunno = '?'; // znak nahrazujici neohodnocene hlasovani us
-  var content = '<thead><tr><th>user</th><th>value</th></tr></thead><tbody>';
+  var content = '<thead><tr><th>user</th><th>voted</th></tr></thead><tbody>';
   $('#voteTable').remove();
   this.contentEl.append('<table id="voteTable" class="table"></table>');
   for ( var key in votes) {
