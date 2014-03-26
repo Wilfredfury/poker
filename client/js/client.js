@@ -20,7 +20,7 @@ traineeApp.Core.prototype.init = function() {
 };
 
 traineeApp.Core.prototype.logout = function() {
-  if (this.user.email){
+  if (this.user.email) {
     this.io.emit('logout-request', this.user.email);
   }
 };
@@ -33,15 +33,15 @@ traineeApp.Core.prototype.logout = function() {
 traineeApp.Core.prototype.sendLogin = function(loginID) {
   var email = "";
   var _this = this;
-  if (localStorage.getItem(loginID) === null) {
-    this.view.formEl.show();
-    this.view.formEl.submit(function(event) {
-      event.preventDefault();
-      email = _this.view.emailEl.val();
-      _this.io.emit('login-request', {
-        mail : email
-      });
+  this.view.formEl.submit(function(event) {
+    event.preventDefault();
+    email = _this.view.emailEl.val();
+    _this.io.emit('login-request', {
+      mail : email
     });
+  });
+  if (!localStorage.getItem(loginID)) {
+    this.view.formEl.show();
   } else {
     email = localStorage.getItem(loginID);
     this.io.emit('login-request', {
@@ -63,9 +63,10 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
       _this.user = new traineeApp.User(data.user);
       localStorage.setItem(loginID, _this.user.email);
       _this.view.login();
+      _this.initLogoutButton();
       _this.view.flashMsg("flashMsg", "Successfuly logged in!", traineeApp.View.messageTypes.success, 5000);
       if (_this.user.role == traineeApp.User.roleTypes.sm) {
-        _this.io.emit("usList-request", _this.user.team);
+        _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
       }
@@ -74,15 +75,29 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
     }
   });
 
+  this.io.on('logout-response', function(data) {
+    localStorage.clear();
+    _this.view.logout();
+  });
+
   this.io.on('usList-response', function(data) {
     _this.view.usList(data);
     _this.initUSListButtons();
   });
 
+  this.io.on('votes-response', function(data) {
+    if (data) {
+      _this.votes = data;
+      _this.io.emit('loginVote-request', _this.user.email);
+    } else {
+      _this.io.emit("usList-request", _this.user.team);
+    }
+  });
   this.io.on('startVote-response', function(data) {
     _this.view.startVote(data);
     _this.initVoteButtons();
   });
+
   // posilano jen sm
   this.io.on('valueVote-response', function(data) {
     _this.votes[data.votedName] = Number(data.voted);
@@ -93,13 +108,22 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
     _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.success, 5000);
     _this.view.wait();
   });
-  
+
   this.io.on('endVoteError-response', function(data) {
-    _this.view.flashMsg("flashMsg", "The vote has ended without result because "+data, traineeApp.View.messageTypes.warning, 5000);
+    _this.view.flashMsg("flashMsg", "The vote has ended without result because " + data, traineeApp.View.messageTypes.warning, 5000);
     _this.view.wait();
   });
 };
 
+/**
+ * inciializace logout tlacitka
+ */
+traineeApp.Core.prototype.initLogoutButton = function() {
+  var _this = this;
+  $('#logoutBtn').click(function() {
+    _this.io.emit('logout-request', _this.user.email);
+  });
+};
 /**
  * inicializace tlacitek pro scrummastera
  */
@@ -113,27 +137,26 @@ traineeApp.Core.prototype.initUSListButtons = function() {
     _this.votes = {};
     _this.view.contentEl.empty();
     _this.io.emit('startVote-request', {
-      team : _this.user.team,
-      usid : $(this).val()
+    team : _this.user.team,
+    usid : $(this).val()
     });
   });
 };
-
 
 /**
  * inicializace tlacitek pro hlasovani
  */
 traineeApp.Core.prototype.initVoteButtons = function() {
-  var _this = this;  
-  $('#voteEndBtn').click(function(){
+  var _this = this;
+  $('#voteEndBtn').click(function() {
     _this.io.emit('endVote-request', _this.user.email);
   });
   $('.cards').click(function() {
     var value = $(this).attr("data-value");
-    _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, 5000);    
+    _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, 5000);
     _this.io.emit('valueVote-request', {
-      email : _this.user.email,
-      value : value
+    email : _this.user.email,
+    value : value
     });
   });
 };

@@ -3,7 +3,6 @@
  */
 exports.usersList = {}; // uklada info o "prihlasenych" uzivatelich (otevrene sockety).
 exports.usList = {}; // uklada info o aktivnich US pro hlasovani.
-
 /**
  * vlozeni noveho uzivatele do seznamu prihlasenych uzivatelu
  * 
@@ -15,9 +14,9 @@ exports.addUser = function(req) {
     exports.usersList[oUser.team] = {};
   }
   exports.usersList[oUser.team][oUser.email] = {
-    name : oUser.name,
-    role : oUser.role,
-    socket : req
+  name : oUser.name,
+  role : oUser.role,
+  socket : req
   };
 };
 
@@ -78,7 +77,10 @@ exports.getSmSocket = function(userTeam) {
  * @param usid - ID vkladane user story
  */
 exports.addUS = function(team, usid) {
-  exports.usList[team] = usid;
+  exports.usList[team] = {
+    titleID : usid,
+    votes : {}
+  };
 };
 
 /**
@@ -88,7 +90,9 @@ exports.addUS = function(team, usid) {
  * @return string - aktivni us daneho tymu
  */
 exports.getUS = function(team) {
-  return exports.usList[team];
+  if (exports.usList[team]){
+    return exports.usList[team].titleID;
+  }
 };
 
 /**
@@ -123,4 +127,31 @@ exports.getUserList = function() {
  */
 exports.getUSList = function() {
   return exports.usList;
+};
+
+/**
+ * pridani hlasu do aktivniho hlasovani
+ * 
+ * @param team - team hlasovani
+ * @param name - jmeno hlasujiciho
+ * @param vote - hodnota hlasovani
+ */
+exports.addVote = function(team, name, vote) {
+  var usID = exports.getUS(team);
+  if (usID) {
+    exports.usList[team].votes[name] = vote;
+  }
+};
+
+/**
+ * ziskani dosavadnich hlasu
+ * 
+ * @param team - team hledaneho hlasovani
+ * @return object - {name : hodnota} seznam hlasu
+ */
+exports.getVotes = function(team) {
+  var usID = exports.getUS(team);
+  if (usID) {
+    return exports.usList[team].votes;
+  }
 };

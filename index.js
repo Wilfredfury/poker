@@ -34,25 +34,37 @@ app.io.route('loginVote-request', function(req) {
   var usInfo = server.getUS(userInfo.team);
   if (usInfo) {
     req.io.emit('startVote-response', modelInstance.getUS(userInfo.team, usInfo));
+    if (userInfo.role == model.model.roleTypes.sm) {
+      var votes = server.getVotes(userInfo.team);
+      if (votes && votes != {}) { // pokud nemame co zobrazit, tak nebudeme
+        for ( var key in votes) { // zopakovani prvniho hlasovani v tabulce pro zobrazeni hlasovani
+          req.io.emit('valueVote-response', {
+          voted : votes[key],
+          votedName : key
+          });
+          break;
+        }
+      }
+    }
+  }
+});
+// (2). poslani dosavadniho hlasovani SM
+app.io.route('votes-request', function(req) {
+  var userInfo = modelInstance.isRegistered(req.data).user;
+  var data = undefined;
+  if (userInfo) {
+    var usInfo = server.getUS(userInfo.team);
+    if (usInfo) {
+      data = server.getVotes(userInfo.team);
+    }
+    req.io.emit('votes-response', data);
   }
 });
 // (2-5). odhlaseni uzivatele odebranim ze seznamu
 app.io.route('logout-request', function(req) {
   var userInfo = modelInstance.getUser(req.data);
   server.removeUser(userInfo);
-  if (server.getUS(userInfo.team)) {
-    server.removeUS(userInfo.team);
-    console.log(server.getUserList());
-    if (userInfo.role == model.model.roleTypes.sm) { // odhlasil se SM
-      var teamList = server.getUsers(userInfo.team);
-      for ( var key in teamList) {
-        var usReq = server.getUserSocket(userInfo.team, key);
-        if (usReq) {
-          usReq.io.emit('endVoteError-response', "SM logged off.");
-        }
-      }
-    }
-  }
+  req.io.emit('logout-response');
 });
 // 3. us zvolil us, poslani informaci o dane us vsem z tymu
 app.io.route('startVote-request', function(req) {
@@ -69,28 +81,30 @@ app.io.route('startVote-request', function(req) {
 // 4. developeri posilaji sve hlasovani sm, sm ukonci hlasovani
 app.io.route('valueVote-request', function(req) {
   var userInfo = modelInstance.getUser(req.data.email);
-  // z USListu vime, o kterou us se hlasuje podle userTeamu
-  if (userInfo.role != model.model.roleTypes.sm) { // dev hlasuji
-    var smSocket = server.getSmSocket(userInfo.team);
-    if (smSocket) {
-      smSocket.io.emit('valueVote-response', {
-      voted : req.data.value,
-      votedName : userInfo.name
-      });
-    }
-  } else { // SM konec hlasovani
-    var usID = server.getUS(userInfo.team);
-    var usValue = req.data.value;
-    // TP.send(usID,usValue); zpracovani hodnoceni hlasovani
-    server.removeUS(userInfo.team);
-    var teamList = server.getUsers(userInfo.team);
-    for ( var key in teamList) {
-      var usReq = server.getUserSocket(userInfo.team, key);
-      if (usReq && (usReq != req)) {
-        usReq.io.emit('endVote-response', usValue);
+  if (userInfo) {
+    if (userInfo.role != model.model.roleTypes.sm) {
+      server.addVote(userInfo.team, userInfo.name, req.data.value);
+      var smSocket = server.getSmSocket(userInfo.team);
+      if (smSocket) {
+        smSocket.io.emit('valueVote-response', {
+        voted : req.data.value,
+        votedName : userInfo.name
+        });
       }
+    } else { // SM konec hlasovani
+      var usID = server.getUS(userInfo.team);
+      var usValue = req.data.value;
+      // TP.send(usID,usValue); zpracovani hodnoceni hlasovani
+      server.removeUS(userInfo.team);
+      var teamList = server.getUsers(userInfo.team);
+      for ( var key in teamList) {
+        var usReq = server.getUserSocket(userInfo.team, key);
+        if (usReq && (usReq != req)) {
+          usReq.io.emit('endVote-response', usValue);
+        }
+      }
+      req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
     }
-    req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
   }
 });
 // (4-5). SM rusi hlasovani bez vysledku

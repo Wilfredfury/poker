@@ -47,7 +47,17 @@ traineeApp.View.prototype.flashMsg = function(elID, text, type, hide) {
  */
 traineeApp.View.prototype.login = function() {
   this.formEl.hide();
-  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + "</span></div>");
+  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + " </span><button class='buttonSmall' id='logoutBtn'>logout</button></div>");
+};
+
+/**
+ * zobrazeni login formu po odhlaseni
+ */
+traineeApp.View.prototype.logout = function() {
+  this.formEl.show();
+  $('#login-info').remove();
+  $('#logoutBtn').remove();
+  this.contentEl.empty();
 };
 
 /**
@@ -86,7 +96,7 @@ traineeApp.View.prototype.startVote = function(us) {
   if (app.user.role == traineeApp.User.roleTypes.sm) { // SM
     this.contentEl.append('<button id="voteEndBtn" class="button">end vote</button>');
   }
-  this.contentEl.append('<div id="vote-info"><h3>' + us.title + '<br />' + us.description + '</h3></div><table id="cardsTable" class="table karty"></table>');
+  this.contentEl.append('<div id="vote-info"><h3>' + us.titleID + ' ' + us.title + '<br />' + us.description + '</h3></div><table id="cardsTable" class="table karty"></table>');
   while (i < number.length) {
     content += '<tr>';
     for ( var j = i; j < (i + inRow); j++) {
