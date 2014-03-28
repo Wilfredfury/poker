@@ -125,5 +125,5 @@ traineeApp.View.prototype.valueVote = function(votes) {
     content += '<tr><td>' + key + '</td><td>' + ((nan) ? dunno : votes[key]) + '</td></tr>';
   }
   med = med / num; // zobrazeni promenne dunno misto NaN, cela cisla bez setin
-  $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">' + ((isNaN(med)) ? dunno : ((Math.round(med) == med) ? med : med.toFixed(2))) + '</td></tr></tfoot>');
+  $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">&#8709;&nbsp;' + ((isNaN(med)) ? dunno : Number(med.toFixed(2))) + '</td></tr></tfoot>');
 };

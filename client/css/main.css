@@ -26,6 +26,16 @@ body {
     outline-width: 2px;
 }
 
+#voteTable > tfoot > tr > td {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#voteTable {
+    margin: 10px auto;
+}
+
 .USbtn, .cards {
     border-radius: 50%;
     width: 50px;
