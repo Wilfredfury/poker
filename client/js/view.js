@@ -13,10 +13,10 @@ traineeApp.View = function() {
 };
 
 traineeApp.View.messageTypes = {
-warning : 'warning',
-success : 'success',
-error : 'error',
-info : 'info'
+  warning : 'warning',
+  success : 'success',
+  error : 'error',
+  info : 'info'
 };
 
 /**
@@ -77,7 +77,7 @@ traineeApp.View.prototype.usList = function(us) {
   this.contentEl.empty();
   this.contentEl.append('<button class="button" id="USListBtn">request us</button>' + '<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for ( var key in us) {
-    var desc = us[key].description; // kvuli citelnosti nadchazejiciho vyrazu
+    var desc = us[key].description; // zkraceni vyrazu
     $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc.substr(0, Math.min(desc.length, 100)) + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
   }
 };

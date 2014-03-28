@@ -5,9 +5,9 @@ var traineeApp = traineeApp || {};
 
 traineeApp.Core = function() {
   this.io = io.connect(); // socket spojeni uzivatele
-  this.user = {}; // info o uzivateli
   this.view = new traineeApp.View(); // view jadra
   this.votes = {}; // pro SM ulozeni hlasovani
+  this.user = {}; // info o uzivateli
 };
 
 /**
@@ -18,7 +18,9 @@ traineeApp.Core.prototype.init = function() {
   this.initListeners(loginID);
   this.sendLogin(loginID);
 };
-
+/**
+ * odhlaseni uzivatele
+ */
 traineeApp.Core.prototype.logout = function() {
   if (this.user.email) {
     this.io.emit('logout-request', this.user.email);
@@ -31,22 +33,24 @@ traineeApp.Core.prototype.logout = function() {
  * @param loginID - prvek v localStorage kde je hledana hodnota prihlaseni
  */
 traineeApp.Core.prototype.sendLogin = function(loginID) {
-  var email = "";
   var _this = this;
+  var email = "";
   this.view.formEl.submit(function(event) {
     event.preventDefault();
     email = _this.view.emailEl.val();
     _this.io.emit('login-request', {
-      mail : email
-    });
+        mail : email
+      }
+    );
   });
   if (!localStorage.getItem(loginID)) {
     this.view.formEl.show();
   } else {
     email = localStorage.getItem(loginID);
     this.io.emit('login-request', {
-      mail : email
-    });
+        mail : email
+      }
+    );
   }
 };
 
@@ -57,7 +61,7 @@ traineeApp.Core.prototype.sendLogin = function(loginID) {
  */
 traineeApp.Core.prototype.initListeners = function(loginID) {
   var _this = this;
-  // hlidani odpovedi ze serveru a zmena html
+  // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)
   this.io.on('login-response', function(data) {
     if (data.success) {
       _this.user = new traineeApp.User(data.user);
@@ -69,46 +73,47 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
         _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
+        _this.io.emit('loginVote-request', _this.user.email);
       }
     } else {
       _this.view.flashMsg("flashMsg", "User not found!", traineeApp.View.messageTypes.error, 5000);
     }
   });
-
+  // odhlaseni uzivatele
   this.io.on('logout-response', function(data) {
     localStorage.clear();
     _this.view.logout();
   });
-
-  this.io.on('usList-response', function(data) {
-    _this.view.usList(data);
-    _this.initUSListButtons();
-  });
-
+  // zaslani dosavadnich hlasu aktivniho hlasovani SM
   this.io.on('votes-response', function(data) {
     if (data) {
       _this.votes = data;
       _this.io.emit('loginVote-request', _this.user.email);
     } else {
-      _this.io.emit("usList-request", _this.user.team);
+      _this.io.emit('usList-request', _this.user.email);
     }
   });
+  // zaslani usListu SM
+  this.io.on('usList-response', function(data) {
+    _this.view.usList(data);
+    _this.initUSListButtons();
+  });
+  // zacatek hlasovani
   this.io.on('startVote-response', function(data) {
     _this.view.startVote(data);
     _this.initVoteButtons();
   });
-
-  // posilano jen sm
+  // jednotlive vysledky hlasovani
   this.io.on('valueVote-response', function(data) {
     _this.votes[data.votedName] = Number(data.voted);
     _this.view.valueVote(_this.votes);
   });
-
+  // uspesny konec hlasovani
   this.io.on('endVote-response', function(data) {
     _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.success, 5000);
     _this.view.wait();
   });
-
+  // zruseni hlasovani
   this.io.on('endVoteError-response', function(data) {
     _this.view.flashMsg("flashMsg", "The vote has ended without result because " + data, traineeApp.View.messageTypes.warning, 5000);
     _this.view.wait();
@@ -116,7 +121,7 @@ traineeApp.Core.prototype.initListeners = function(loginID) {
 };
 
 /**
- * inciializace logout tlacitka
+ * incializace logout tlacitka
  */
 traineeApp.Core.prototype.initLogoutButton = function() {
   var _this = this;
@@ -130,16 +135,17 @@ traineeApp.Core.prototype.initLogoutButton = function() {
 traineeApp.Core.prototype.initUSListButtons = function() {
   var _this = this;
   $('#USListBtn').click(function() {
-    _this.io.emit("usList-request", _this.user.team);
+    _this.io.emit('usList-request', _this.user.email);
   });
 
   $('.USbtn').click(function() {
     _this.votes = {};
     _this.view.contentEl.empty();
     _this.io.emit('startVote-request', {
-    team : _this.user.team,
-    usid : $(this).val()
-    });
+        email : _this.user.email,
+        usid : $(this).val()
+      }
+    );
   });
 };
 
@@ -149,14 +155,24 @@ traineeApp.Core.prototype.initUSListButtons = function() {
 traineeApp.Core.prototype.initVoteButtons = function() {
   var _this = this;
   $('#voteEndBtn').click(function() {
-    _this.io.emit('endVote-request', _this.user.email);
+    _this.io.emit('endVote-request', {
+        email : _this.user.email,
+        value : undefined
+      }
+    );
   });
+
   $('.cards').click(function() {
     var value = $(this).attr("data-value");
-    _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, 5000);
-    _this.io.emit('valueVote-request', {
-    email : _this.user.email,
-    value : value
-    });
+    var listener = 'endVote-request';
+    if (_this.user.role != traineeApp.User.roleTypes.sm) { 
+      _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, 5000);
+      listener = 'valueVote-request';
+    }
+    _this.io.emit(listener, {
+        email : _this.user.email,
+        value : value
+      }
+    );
   });
 };

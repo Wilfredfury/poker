@@ -25,9 +25,9 @@ exports.addUser = function(req) {
  * 
  * @param user - objekt uzivatele, ktery ma byt odhlasen
  */
-exports.removeUser = function(user) {
-  if (exports.usersList[user.team]) {
-    delete exports.usersList[user.team][user.email];
+exports.removeUser = function(team, email) {
+  if (exports.usersList[team]) {
+    delete exports.usersList[team][email];
   }
 };
 
@@ -154,4 +154,14 @@ exports.getVotes = function(team) {
   if (usID) {
     return exports.usList[team].votes;
   }
+};
+
+/**
+ * odesle vysledek hlasovani o US na TP
+ * 
+ * @param usID - ID user story, o ktere se hlasovalo
+ * @param value - vysledek hlasovani
+ */
+exports.sendVoteTP = function(usID, value){
+
 };
