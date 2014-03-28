@@ -75,7 +75,7 @@ traineeApp.View.prototype.wait = function() {
  */
 traineeApp.View.prototype.usList = function(us) {
   this.contentEl.empty();
-  this.contentEl.append('<button class="button" id="USListBtn">request us</button>' + '<table id="USList" class="table"><thead><tr><th>user story #</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
+  this.contentEl.append('<button class="button" id="USListBtn">request&nbsp;us</button>' + '<table id="USList" class="table"><thead><tr><th>user&nbsp;story</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for ( var key in us) {
     var desc = us[key].description; // zkraceni vyrazu
     $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc.substr(0, Math.min(desc.length, 100)) + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
@@ -96,22 +96,12 @@ traineeApp.View.prototype.startVote = function(us) {
   if (app.user.role == traineeApp.User.roleTypes.sm) { // SM
     this.contentEl.append('<button id="voteEndBtn" class="button">end vote</button>');
   }
-  this.contentEl.append('<div id="vote-info"><h3>' + us.titleID + ' ' + us.title + '<br />' + us.description + '</h3></div><table id="cardsTable" class="table karty"></table>');
+  this.contentEl.append('<div id="vote-info"><h3><span class="vote-info-header">' + us.titleID + ' ' + us.title + '</span><br /><span class="vote-info-body">' + us.description + '</span></h3></div><div id="cards-wrapper"></div>');
   while (i < number.length) {
-    content += '<tr>';
-    for ( var j = i; j < (i + inRow); j++) {
-      content += '<td class="cards" data-value="' + number[j] + '">' + number[j] + '</td>';
-      if (j == (number.length - 1))
-        break;
-    }
-    content += '</tr>';
-    i += inRow;
+      content += '<div class="cards" data-value="' + number[i] + '">' + number[i] + '</div>';
+     i++;
   }
-  $('#cardsTable').append(content);
-  /*
-   * jen list pro predelani pomoci css this.contentEl.append('<ul>'); for ( var i in number) { this.contentEl.append('<li class="cards" data-value="' + number[i] + '">' +
-   * number[i] + '</li>'); this.contentEl.append(content + '</ul>'); }
-   */
+  $('#cards-wrapper').append(content);
 };
 
 /**
