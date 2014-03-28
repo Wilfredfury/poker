@@ -1,15 +1,22 @@
-
-body {
-    margin: 0;
-    background-color: #e0e0e0;
-    font-family: arial, helvetica, clean, sans-serif;
-    min-width: 520px;
+html, body {
+    height: 100%;
 }
 
-#container {
+
+body {
+    background-color: #e0e0e0;
+    font-family: arial, helvetica, clean, sans-serif;
+    background: url("../img/logo.png") no-repeat center;
+    background-size: 70%;
     text-align: center;
-    height: 150px;
-    border: 0px solid #000;
+}
+/*.padding{*/
+    /*height: 50px;*/
+    /*width: 100%;*/
+/*}*/
+
+#content {
+    padding: 50px 0;
 }
 
 #login-email {
@@ -24,6 +31,7 @@ body {
     color: black;
     outline-color: rgb(204, 0, 255);
     outline-width: 2px;
+    -webkit-appearance: none;
 }
 
 #voteTable > tfoot > tr > td {
@@ -44,6 +52,8 @@ body {
     color: #fff;
     cursor: pointer;
     border: 0;
+    box-shadow: 2px 2px 6px #000;
+    z-index: 0;
 }
 
 #vote-info {
@@ -83,8 +93,13 @@ body {
     line-height: 40px;
     box-shadow: 0px 0 30px black;
     margin-bottom: 10px;
-    position: relative;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 100;
 }
+
+
 
 .cards:hover, .USbtn:hover, .button:hover, #logoutBtn:hover{
     transform: scale(1.1,1.1);
@@ -104,9 +119,6 @@ body {
     font-weight: bold;
 }
 
-#login-form {
-    margin-top: 20px;
-}
 
 .button {
     cursor: pointer;
@@ -121,48 +133,33 @@ body {
     text-transform: uppercase;
     font-weight: bold;
     color: white;
+    -webkit-appearance: none;
 }
 
 #logoutBtn {
     background-color: rgb(56, 56, 56);
     border: 0;
-    padding: 5px 20px;
     color: white;
-    font-weight: bold;
-    position: absolute;
-    right: 20px;
-    top: 6px;
+    padding: 0 13px;
     cursor: pointer;
+    font-size: 20px;
+    font-weight: bold;
+    float: right;
+    display: block;
+    margin: 0;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
 }
 
 .message {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     right: 0;
     left: 0;
     z-index: 100;
-    -webkit-background-size: 30px 30px;
-    -moz-background-size: 30px 30px;
-    background-size: 60px 60px;
-    background-image: -webkit-gradient(linear, left top, right bottom, color-stop(.25, rgba(255, 255, 255, .05)), color-stop(.25, transparent), color-stop(.5, transparent), color-stop(.5, rgba(255, 255, 255, .05)), color-stop(.75, rgba(255, 255, 255, .05)), color-stop(.75, transparent), to(transparent));
-    background-image: -webkit-linear-gradient(135deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
-    background-image: -moz-linear-gradient(135deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
-    background-image: -ms-linear-gradient(135deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
-    background-image: -o-linear-gradient(135deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
-    background-image: linear-gradient(135deg, rgba(255, 255, 255, .05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .05) 50%, rgba(255, 255, 255, .05) 75%, transparent 75%, transparent);
-    -moz-box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .4);
-    -webkit-box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .4);
-    box-shadow: inset 0 -1px 0 rgba(255, 255, 255, .4);
-    width: 100%;
-    border: 1px solid;
-    color: #fff;
     padding: 15px;
     text-align: center;
-    /*position: relative;*/
-    /*_position: absolute;*/
-    text-shadow: 0 1px 0 rgba(0, 0, 0, .5);
-    -webkit-animation: animate-bg 5s linear infinite;
-    -moz-animation: animate-bg 5s linear infinite;
 }
 
 .info {
@@ -192,6 +189,7 @@ body {
 .message p {
     margin: 0;
 }
+
 
 @-webkit-keyframes animate-bg {
     from {
@@ -312,7 +310,8 @@ body {
 }
 
 @media (max-width: 650px) {
-    .button{
-        width: 90%;
+    .button, #login-email{
+        width: 80%;
+        margin: 3% 5%;
     }
 }

@@ -4,10 +4,9 @@
 var traineeApp = traineeApp || {};
 
 traineeApp.View = function() {
-  this.showing = []; // pole pro zobrazovani specificke zpravy pouze jednou
-  this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni
-  this.emailEl = $('#login-email'); // textove pole pro mail
-  this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
+  this.formEl = null; // hlavni prvek formu pro prihlaseni
+  this.emailEl = null; // textove pole pro mail
+  this.submitEl = null; // tlacitko pro odeslani mailu
   this.contentEl = $('#content'); // hlavni prvek pro obsah
   this.panelEl = $('#panel'); // hlavni prvek pro login
 };
@@ -28,33 +27,30 @@ traineeApp.View.messageTypes = {
  * @param hide - doba v ms za kterou hlaska zmizi
  */
 traineeApp.View.prototype.flashMsg = function(elID, text, type, hide) {
-  var aShow = this.showing; // pole zobrazenych hlasek
-  if (!(aShow.indexOf(text) > -1)) {
-    aShow.push(text);
     var msg = $('<div class="' + type + ' message"><h3>' + text + '</h3></div>');
     $('#' + elID).append(msg);
     if (hide != null) {
       setTimeout(function() {
-        aShow.splice(aShow.indexOf(text), 1);
         msg.remove();
       }, hide);
-    }
   }
 };
+
+
+
+
 
 /**
  * zobrazeni prihlaseni uzivatele
  */
 traineeApp.View.prototype.login = function() {
-  this.formEl.hide();
-  this.panelEl.append("<div id='login-info'>Logged in as <span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + " </span><button class='buttonSmall' id='logoutBtn'>logout</button></div>");
+  this.panelEl.append("<div id='login-info'><span class='bold'>" + app.user.name + "</span> in team <span class='bold'>" + app.user.team + " </span><button class='buttonSmall' id='logoutBtn'>&rarr;</button></div>");
 };
 
 /**
  * zobrazeni login formu po odhlaseni
  */
 traineeApp.View.prototype.logout = function() {
-  this.formEl.show();
   $('#login-info').remove();
   $('#logoutBtn').remove();
   this.contentEl.empty();
@@ -96,12 +92,14 @@ traineeApp.View.prototype.startVote = function(us) {
   if (app.user.role == traineeApp.User.roleTypes.sm) { // SM
     this.contentEl.append('<button id="voteEndBtn" class="button">end vote</button>');
   }
-  this.contentEl.append('<div id="vote-info"><h3><span class="vote-info-header">' + us.titleID + ' ' + us.title + '</span><br /><span class="vote-info-body">' + us.description + '</span></h3></div><div id="cards-wrapper"></div>');
+  this.contentEl.append('<br /><div id="cards-wrapper"></div>');
   while (i < number.length) {
       content += '<div class="cards" data-value="' + number[i] + '">' + number[i] + '</div>';
      i++;
   }
   $('#cards-wrapper').append(content);
+  this.contentEl.append('<div id="vote-info"><h3><span class="vote-info-header">' + us.titleID + ' ' + us.title + '</span><br /><span class="vote-info-body">' + us.description + '</span></h3></div>');
+
 };
 
 /**
@@ -126,4 +124,19 @@ traineeApp.View.prototype.valueVote = function(votes) {
   }
   med = med / num; // zobrazeni promenne dunno misto NaN, cela cisla bez setin
   $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">&#8709;&nbsp;' + ((isNaN(med)) ? dunno : Number(med.toFixed(2))) + '</td></tr></tfoot>');
+};
+
+
+traineeApp.View.prototype.showLoginForm = function() {
+  this.contentEl.append('<div class="login-form-wrapper">' +
+                          '<form name="login-form" id="login-form">' +
+                            '<input placeholder="Email login" type="email" id="login-email" required> <br/>' +
+                            '<input type="submit" value="submit" id="login-submit" class="button">' +
+                          '</form>' +
+                        '</div>');
+
+  this.formEl = $('#login-form'); // hlavni prvek formu pro prihlaseni
+  this.emailEl = $('#login-email'); // textove pole pro mail
+  this.submitEl = $('#login-submit'); // tlacitko pro odeslani mailu
+
 };

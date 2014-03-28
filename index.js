@@ -132,4 +132,4 @@ app.io.route('endVote-request', function(req) {
 });
 
 console.log('listening at localhost:4987');
-app.listen(4987); // spusteni aplikace na portu 4987
+app.listen(4987, "0.0.0.0"); // spusteni aplikace na portu 4987
