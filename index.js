@@ -27,7 +27,7 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
 //2. poslani dosavadniho hlasovani SM
 app.io.route('votes-request', function(req) {
   var userInfo = modelInstance.isRegistered(req.data).user;
-  var data = undefined;
+  var data = null;
   if (userInfo) {
     var usInfo = server.getUS(userInfo.team);
     if (usInfo) {

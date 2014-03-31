@@ -155,7 +155,7 @@ traineeApp.Core.prototype.initVoteButtons = function () {
   $('#voteEndBtn').click(function () {
     _this.io.emit('endVote-request', {
         email: _this.user.email,
-        value: undefined
+        value: null
       }
     );
   });

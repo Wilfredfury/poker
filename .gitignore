@@ -1,4 +1,5 @@
 node_modules
+files
 .settings
 .project
 *.orig
