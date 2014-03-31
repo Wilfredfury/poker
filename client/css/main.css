@@ -2,7 +2,6 @@ html, body {
     height: 100%;
 }
 
-
 body {
     background-color: #e0e0e0;
     font-family: arial, helvetica, clean, sans-serif;
@@ -85,7 +84,6 @@ body {
     font-size: 30px;
 }
 
-
 #login-info {
     background-color: #000;
     color: white;
@@ -98,8 +96,6 @@ body {
     width: 100%;
     z-index: 100;
 }
-
-
 
 .cards:hover, .USbtn:hover, .button:hover, #logoutBtn:hover{
     transform: scale(1.1,1.1);
@@ -118,7 +114,6 @@ body {
 .bold {
     font-weight: bold;
 }
-
 
 .button {
     cursor: pointer;
@@ -190,7 +185,6 @@ body {
     margin: 0;
 }
 
-
 @-webkit-keyframes animate-bg {
     from {
         background-position: 0 0;
@@ -224,8 +218,6 @@ body {
     color: #bd5a35;
     text-decoration:underline;
 }
-
-
 
 .table {
     color: #666;

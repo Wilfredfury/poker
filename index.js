@@ -21,7 +21,7 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
   if (registered.success) {
     server.addUser(req);
   }
-  req.io.emit('login-response', modelInstance.isRegistered(req.session.user)); // vraceni odpovedi na clienta
+  req.io.emit('login-response', registered); // vraceni odpovedi na clienta
   console.log(server.getUserList()); // vypis online uzivatelu
 });
 //2. poslani dosavadniho hlasovani SM
@@ -48,8 +48,8 @@ app.io.route('loginVote-request', function(req) {
         if (votes && votes != {}) { // pokud nemame co zobrazit, tak nebudeme
           for ( var key in votes) { // zopakovani prvniho hlasovani v tabulce pro zobrazeni hlasovani
             req.io.emit('valueVote-response', {
-              voted : votes[key],
-              votedName : key
+                voted : votes[key],
+                votedName : key
               }
             );
             break;
@@ -59,14 +59,7 @@ app.io.route('loginVote-request', function(req) {
     }
   }
 });
-//3. poslani seznamu us sm
-app.io.route('usList-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data);
-  if (userInfo) {
-    req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
-  }
-});
-// (2-5). odhlaseni uzivatele odebranim ze seznamu
+//(2-5). odhlaseni uzivatele odebranim ze seznamu
 app.io.route('logout-request', function(req) {
   var userInfo = modelInstance.getUser(req.data);
   if (userInfo) {
@@ -74,7 +67,14 @@ app.io.route('logout-request', function(req) {
     req.io.emit('logout-response');
   }
 });
-// 3. us zvolil us, poslani informaci o dane us vsem z tymu
+//3. poslani seznamu us sm
+app.io.route('usList-request', function(req) {
+  var userInfo = modelInstance.getUser(req.data);
+  if (userInfo) {
+    req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
+  }
+});
+// 4. SM zvolil us, poslani informaci o dane us vsem z tymu
 app.io.route('startVote-request', function(req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
@@ -92,7 +92,7 @@ app.io.route('startVote-request', function(req) {
     }
   }
 });
-// 4. developeri posilaji sve hlasovani sm
+// 5. developeri posilaji sve hlasovani sm
 app.io.route('valueVote-request', function(req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
@@ -107,7 +107,7 @@ app.io.route('valueVote-request', function(req) {
     }
   }
 });
-// (4-5). SM konci hlasovani
+//(5-6). SM konci hlasovani
 app.io.route('endVote-request', function(req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
@@ -115,7 +115,7 @@ app.io.route('endVote-request', function(req) {
       server.sendVoteTP(server.getUS(userInfo.team), req.data.value);
     }
     server.removeUS(userInfo.team);
-
+    
     var teamList = server.getUsers(userInfo.team);
     for ( var key in teamList) {
       var usReq = server.getUserSocket(userInfo.team, key);
@@ -126,6 +126,5 @@ app.io.route('endVote-request', function(req) {
     req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
   }
 });
-
 console.log('listening at localhost:4987');
 app.listen(4987, "0.0.0.0"); // spusteni aplikace na portu 4987

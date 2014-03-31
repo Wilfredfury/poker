@@ -19,7 +19,9 @@ traineeApp.View.messageTypes = {
 };
 
 traineeApp.View.numbers = ["1", "2", "3", "5", "8", "13", "21", "34", "?" ]; // hodnoty pro karty na hlasovani, posledni musi byt znak pro hodnotu 'nic'
+
 traineeApp.View.maximalDescriptionShowLength = 100; // nejdelsi povoleny komentar pro zobrazeni do tabulky vyberu us scrummasterem
+
 /**
  * zobrazeni informativni hlasky uzivateli
  * 

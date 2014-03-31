@@ -14,9 +14,9 @@ exports.addUser = function(req) {
     exports.usersList[oUser.team] = {};
   }
   exports.usersList[oUser.team][oUser.email] = {
-  name : oUser.name,
-  role : oUser.role,
-  socket : req
+    name : oUser.name,
+    role : oUser.role,
+    socket : req
   };
 };
 

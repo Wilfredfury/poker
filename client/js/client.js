@@ -12,14 +12,6 @@ traineeApp.Core = function () {
 };
 
 /**
- * inicializace aplikace
- */
-traineeApp.Core.prototype.init = function () {
-  var loginID = 'traineeAppmail';
-  this.initListeners(loginID);
-  this.sendLogin(loginID);
-};
-/**
  * odhlaseni uzivatele
  */
 traineeApp.Core.prototype.logout = function () {
@@ -29,43 +21,27 @@ traineeApp.Core.prototype.logout = function () {
 };
 
 /**
- * odeslani loginu na server prihlasenim nebo z localStorage
+ * inicializace poslouchani prihlaseni a odeslani loginu na server prihlasenim nebo z localStorage
  *
  * @param loginID - prvek v localStorage kde je hledana hodnota prihlaseni
  */
-traineeApp.Core.prototype.sendLogin = function (loginID) {
+traineeApp.Core.prototype.init = function () {
   var _this = this;
+  var loginID = 'traineeAppmail';
   var email = "";
-  if (localStorage.getItem(loginID)) {
-    email = localStorage.getItem(loginID);
-    //TODO nacist loader
-    this.io.emit('login-request', {
-        mail: email
-      }
-    );
-  }else{
-    this.view.showLoginForm();
-    this.initFormButton();
-  }
-};
-
-/**
- * inicializace posluchacu pro komunikaci se serverem
- *
- * @param loginID - prvek v localStorage kam je ukladana hodnota prihlaseni
- */
-traineeApp.Core.prototype.initListeners = function (loginID) {
-  var _this = this;
-  // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)
+  
+  // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)  
   this.io.on('login-response', function (data) {
     //TODO smazat loader
     if (data.success) {
       _this.user = new traineeApp.User(data.user);
       localStorage.setItem(loginID, _this.user.email);
+      _this.initBoth();
       _this.view.login();
       _this.initLogoutButton();
       _this.view.flashMsg("flashMsg", "Successfuly logged in!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
-      if (_this.user.role == traineeApp.User.roleTypes.sm) {
+      if (_this.user.role == traineeApp.User.roleTypes.sm) {     
+        _this.initSM();
         _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
@@ -75,6 +51,25 @@ traineeApp.Core.prototype.initListeners = function (loginID) {
       _this.view.flashMsg("flashMsg", "User not found!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);
     }
   });
+  
+  if (localStorage.getItem(loginID)) {
+    email = localStorage.getItem(loginID);
+    //TODO nacist loader
+    this.io.emit('login-request', {
+        mail: email
+      }
+    );
+  } else {
+    this.view.showLoginForm();
+    this.initFormButton();
+  }
+};
+
+/**
+ * inicializace spolecnych udalosti ze serveru
+ */
+traineeApp.Core.prototype.initBoth = function(){
+  _this = this;
   // odhlaseni uzivatele
   this.io.on('logout-response', function (data) {
     localStorage.clear();
@@ -82,29 +77,10 @@ traineeApp.Core.prototype.initListeners = function (loginID) {
     _this.view.showLoginForm();
     _this.initFormButton();
   });
-  // zaslani dosavadnich hlasu aktivniho hlasovani SM
-  this.io.on('votes-response', function (data) {
-    if (data) {
-      _this.votes = data;
-      _this.io.emit('loginVote-request', _this.user.email);
-    } else {
-      _this.io.emit('usList-request', _this.user.email);
-    }
-  });
-  // zaslani usListu SM
-  this.io.on('usList-response', function (data) {
-    _this.view.usList(data);
-    _this.initUSListButtons();
-  });
   // zacatek hlasovani
   this.io.on('startVote-response', function (data) {
     _this.view.startVote(data);
     _this.initVoteButtons();
-  });
-  // jednotlive vysledky hlasovani
-  this.io.on('valueVote-response', function (data) {
-    _this.votes[data.votedName] = Number(data.voted);
-    _this.view.valueVote(_this.votes);
   });
   // uspesny konec hlasovani
   this.io.on('endVote-response', function (data) {
@@ -120,6 +96,32 @@ traineeApp.Core.prototype.initListeners = function (loginID) {
 };
 
 /**
+ * inicializace poslouchani serveru pro scrummastera
+ */
+traineeApp.Core.prototype.initSM = function(){
+  _this = this;
+  // zaslani dosavadnich hlasu aktivniho hlasovani SM
+  this.io.on('votes-response', function (data) {
+    if (data) {
+      _this.votes = data;
+      _this.io.emit('loginVote-request', _this.user.email);
+    } else {
+      _this.io.emit('usList-request', _this.user.email);
+    }
+  });
+  // zaslani usListu SM
+  this.io.on('usList-response', function (data) {
+    _this.view.usList(data);
+    _this.initUSListButtons();
+  });
+  // jednotlive vysledky hlasovani
+  this.io.on('valueVote-response', function (data) {
+    _this.votes[data.votedName] = Number(data.voted);
+    _this.view.valueVote(_this.votes);
+  });
+};
+
+/**
  * incializace logout tlacitka
  */
 traineeApp.Core.prototype.initLogoutButton = function () {
@@ -128,8 +130,9 @@ traineeApp.Core.prototype.initLogoutButton = function () {
     _this.io.emit('logout-request', _this.user.email);
   });
 };
+
 /**
- * inicializace tlacitek pro scrummastera
+ * inicializace tlacitek pro vyber user story scrummasterem
  */
 traineeApp.Core.prototype.initUSListButtons = function () {
   var _this = this;
@@ -176,6 +179,9 @@ traineeApp.Core.prototype.initVoteButtons = function () {
   });
 };
 
+/**
+ * inicializace tlacitka pro prihlaseni
+ */
 traineeApp.Core.prototype.initFormButton = function() {
   var _this = this;
   this.view.formEl.submit(function (event) {
