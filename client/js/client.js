@@ -108,12 +108,13 @@ traineeApp.Core.prototype.initListeners = function (loginID) {
   });
   // uspesny konec hlasovani
   this.io.on('endVote-response', function (data) {
-    _this.view.flashMsg("flashMsg", "The vote has ended with result " + data + ".", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
-    _this.view.wait();
-  });
-  // zruseni hlasovani
-  this.io.on('endVoteError-response', function (data) {
-    _this.view.flashMsg("flashMsg", "The vote has ended without result because " + data, traineeApp.View.messageTypes.warning, _this.timeToHideFlash);
+    var message = "The vote has ended with result " + data + "."; // oznameni o vysledku hlasovani
+    var type = traineeApp.View.messageTypes.success; // typ zobrazeni zpravy
+    if (!data){ // nemame vysledek SM ukoncil predcasne
+      message = "The vote has ended without result because SM ended it.";
+      type = traineeApp.View.messageTypes.warning;
+    }
+    _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);    
     _this.view.wait();
   });
 };

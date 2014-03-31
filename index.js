@@ -111,11 +111,7 @@ app.io.route('valueVote-request', function(req) {
 app.io.route('endVote-request', function(req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
-    var listener = 'endVoteError-response';
-    var value = 'SM ended it.';
     if (req.data.value) { // spravne ukonceni, odesilame vysledek
-      listener = 'endVote-response';
-      value = req.data.value;
       server.sendVoteTP(server.getUS(userInfo.team), req.data.value);
     }
     server.removeUS(userInfo.team);
@@ -124,7 +120,7 @@ app.io.route('endVote-request', function(req) {
     for ( var key in teamList) {
       var usReq = server.getUserSocket(userInfo.team, key);
       if (usReq) {
-        usReq.io.emit(listener, value);
+        usReq.io.emit('endVote-response', req.data.value);
       }
     }
     req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
