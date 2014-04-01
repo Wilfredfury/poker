@@ -16,6 +16,7 @@ traineeApp.Core = function () {
  */
 traineeApp.Core.prototype.logout = function () {
   if (this.user.email) {
+    this.view.loaderShow();
     this.io.emit('logout-request', this.user.email);
   }
 };
@@ -32,7 +33,7 @@ traineeApp.Core.prototype.init = function () {
   
   // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)  
   this.io.on('login-response', function (data) {
-    //TODO smazat loader
+    _this.view.loaderHide();
     if (data.success) {
       _this.user = new traineeApp.User(data.user);
       localStorage.setItem(loginID, _this.user.email);
@@ -42,9 +43,11 @@ traineeApp.Core.prototype.init = function () {
       _this.view.flashMsg("flashMsg", "Successfuly logged in!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
       if (_this.user.role == traineeApp.User.roleTypes.sm) {     
         _this.initSM();
+        _this.view.loaderShow();
         _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
+        _this.view.loaderShow();
         _this.io.emit('loginVote-request', _this.user.email);
       }
     } else {
@@ -54,7 +57,7 @@ traineeApp.Core.prototype.init = function () {
   
   if (localStorage.getItem(loginID)) {
     email = localStorage.getItem(loginID);
-    //TODO nacist loader
+    this.view.loaderShow();
     this.io.emit('login-request', {
         mail: email
       }
@@ -72,6 +75,8 @@ traineeApp.Core.prototype.initBoth = function(){
   _this = this;
   // odhlaseni uzivatele
   this.io.on('logout-response', function (data) {
+    _this.view.loaderHide();
+    _this.view.flashMsg("flashMsg", "Successfuly logout!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
     localStorage.clear();
     _this.view.logout();
     _this.view.showLoginForm();
@@ -79,11 +84,13 @@ traineeApp.Core.prototype.initBoth = function(){
   });
   // zacatek hlasovani
   this.io.on('startVote-response', function (data) {
+    _this.view.loaderHide();
     _this.view.startVote(data);
     _this.initVoteButtons();
   });
   // uspesny konec hlasovani
   this.io.on('endVote-response', function (data) {
+    _this.view.loaderHide();
     var message = "The vote has ended with result " + data + "."; // oznameni o vysledku hlasovani
     var type = traineeApp.View.messageTypes.success; // typ zobrazeni zpravy
     if (!data){ // nemame vysledek SM ukoncil predcasne
@@ -104,18 +111,22 @@ traineeApp.Core.prototype.initSM = function(){
   this.io.on('votes-response', function (data) {
     if (data) {
       _this.votes = data;
+      _this.view.loaderShow();
       _this.io.emit('loginVote-request', _this.user.email);
     } else {
+      _this.view.loaderShow();
       _this.io.emit('usList-request', _this.user.email);
     }
   });
   // zaslani usListu SM
   this.io.on('usList-response', function (data) {
+    _this.view.loaderHide();
     _this.view.usList(data);
     _this.initUSListButtons();
   });
   // jednotlive vysledky hlasovani
   this.io.on('valueVote-response', function (data) {
+    _this.view.loaderHide();
     _this.votes[data.votedName] = Number(data.voted);
     _this.view.valueVote(_this.votes);
   });
@@ -127,6 +138,7 @@ traineeApp.Core.prototype.initSM = function(){
 traineeApp.Core.prototype.initLogoutButton = function () {
   var _this = this;
   $('#logoutBtn').click(function () {
+    _this.view.loaderShow();
     _this.io.emit('logout-request', _this.user.email);
   });
 };
@@ -137,12 +149,14 @@ traineeApp.Core.prototype.initLogoutButton = function () {
 traineeApp.Core.prototype.initUSListButtons = function () {
   var _this = this;
   $('#USListBtn').click(function () {
+    _this.view.loaderShow();
     _this.io.emit('usList-request', _this.user.email);
   });
 
   $('.USbtn').click(function () {
     _this.votes = {};
     _this.view.contentEl.empty();
+    _this.view.loaderShow();
     _this.io.emit('startVote-request', {
         email: _this.user.email,
         usid: $(this).val()
@@ -157,6 +171,7 @@ traineeApp.Core.prototype.initUSListButtons = function () {
 traineeApp.Core.prototype.initVoteButtons = function () {
   var _this = this;
   $('#voteEndBtn').click(function () {
+    _this.view.loaderShow();
     _this.io.emit('endVote-request', {
         email: _this.user.email,
         value: null
@@ -171,6 +186,7 @@ traineeApp.Core.prototype.initVoteButtons = function () {
       _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, _this.timeToHideFlash);
       listener = 'valueVote-request';
     }
+    _this.view.loaderShow();
     _this.io.emit(listener, {
         email: _this.user.email,
         value: value
@@ -187,6 +203,7 @@ traineeApp.Core.prototype.initFormButton = function() {
   this.view.formEl.submit(function (event) {
     event.preventDefault();
     email = _this.view.emailEl.val();
+    _this.view.loaderShow();
     _this.io.emit('login-request', {
         mail: email
       }

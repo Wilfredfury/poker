@@ -144,3 +144,20 @@ traineeApp.View.prototype.valueVote = function(votes) {
   med = med / num; // zobrazeni promenne dunno misto NaN, cela cisla bez setin
   $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">&#8709;&nbsp;' + ((isNaN(med)) ? dunno : Number(med.toFixed(2))) + '</td></tr></tfoot>');
 };
+
+
+/**
+ * zobrazeni ajax loader
+ */
+traineeApp.View.prototype.loaderShow = function(){
+  $("#ajax-loader").show();
+}
+
+
+/**
+ * skryti ajax loader
+ */
+traineeApp.View.prototype.loaderHide = function(){
+  $("#ajax-loader").hide();
+}
+
