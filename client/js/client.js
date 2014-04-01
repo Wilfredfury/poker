@@ -76,8 +76,8 @@ traineeApp.Core.prototype.initBoth = function(){
   // odhlaseni uzivatele
   this.io.on('logout-response', function (data) {
     _this.view.loaderHide();
-    _this.view.flashMsg("flashMsg", "Successfuly logout!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
-    localStorage.clear();
+    _this.view.flashMsg("flashMsg", "Successfuly logged out!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
+    localStorage.removeItem("traineeAppmail");
     _this.view.logout();
     _this.view.showLoginForm();
     _this.initFormButton();
