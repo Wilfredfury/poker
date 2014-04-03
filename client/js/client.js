@@ -23,8 +23,6 @@ traineeApp.Core.prototype.logout = function () {
 
 /**
  * inicializace poslouchani prihlaseni a odeslani loginu na server prihlasenim nebo z localStorage
- *
- * @param loginID - prvek v localStorage kde je hledana hodnota prihlaseni
  */
 traineeApp.Core.prototype.init = function () {
   var _this = this;
@@ -47,7 +45,7 @@ traineeApp.Core.prototype.init = function () {
         _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
-        _this.view.loaderShow();
+//        _this.view.loaderShow(); nemusi prijit odpoved
         _this.io.emit('loginVote-request', _this.user.email);
       }
     } else {
@@ -127,7 +125,7 @@ traineeApp.Core.prototype.initSM = function(){
   // jednotlive vysledky hlasovani
   this.io.on('valueVote-response', function (data) {
     _this.view.loaderHide();
-    _this.votes[data.votedName] = Number(data.voted);
+    _this.votes[data.votedName] = parseInt(data.voted);
     _this.view.valueVote(_this.votes);
   });
 };
@@ -186,7 +184,7 @@ traineeApp.Core.prototype.initVoteButtons = function () {
       _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, _this.timeToHideFlash);
       listener = 'valueVote-request';
     }
-    _this.view.loaderShow();
+//    _this.view.loaderShow(); neni odpoved
     _this.io.emit(listener, {
         email: _this.user.email,
         value: value

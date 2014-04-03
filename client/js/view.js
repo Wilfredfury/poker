@@ -141,8 +141,13 @@ traineeApp.View.prototype.valueVote = function(votes) {
     } // zobrazeni obsahu promenne dunno misto NaN
     content += '<tr><td>' + key + '</td><td>' + votesKey + '</td></tr>';
   }
-  med = med / num; // zobrazeni promenne dunno misto NaN, cela cisla bez setin
-  $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">&#8709;&nbsp;' + ((isNaN(med)) ? dunno : Number(med.toFixed(2))) + '</td></tr></tfoot>');
+  if (num){
+    med = med / num;
+    med = Number(med.toFixed(2));    
+  } else {
+    med = dunno;
+  }
+  $('#voteTable').append(content + '</tbody><tfoot><tr><td colspan="2">&#8709;&nbsp;' + med + '</td></tr></tfoot>');
 };
 
 /**
@@ -150,12 +155,12 @@ traineeApp.View.prototype.valueVote = function(votes) {
  */
 traineeApp.View.prototype.loaderShow = function(){
   $("#ajax-loader").show();
-}
+};
 
 /**
  * skryti ajax loader
  */
 traineeApp.View.prototype.loaderHide = function(){
   $("#ajax-loader").hide();
-}
+};
 
