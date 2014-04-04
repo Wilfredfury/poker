@@ -9,7 +9,7 @@ exports.usList = {}; // uklada info o aktivnich US pro hlasovani.
  * @param req - objekt pro komunikaci klienta a serveru 
  */
 exports.addUser = function(req) {
-  var oUser = modelInstance.isRegistered(req.session.user).user;
+  var oUser = modelInstance.getUser(req.session.user);
   if (!exports.usersList[oUser.team]) {
     exports.usersList[oUser.team] = {};
   }

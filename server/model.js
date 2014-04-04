@@ -82,19 +82,7 @@ model.prototype.load = function() {
   this.setUserStories(userStories);
 };
 
-model.prototype.isRegistered = function(email) {
-  for ( var key in this.users) {
-    if (this.users[key].email === email) {
-      return {
-      success : true,
-      user : this.users[key]
-      };
-    }
-  }
-  return {
-    success : false
-  };
-};
+
 
 model.prototype.getUser = function(email) {
   for ( var key in this.users) {

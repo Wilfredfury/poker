@@ -17,8 +17,8 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
   if (!req.session.user) { // prvni komunikace pres spojeni => prirazeni uzivatele
     req.session.user = req.data.mail;
   }
-  var registered = modelInstance.isRegistered(req.session.user);
-  if (registered.success) {
+  var registered = modelInstance.getUser(req.session.user);
+  if (registered) {
     server.addUser(req);
   }
   req.io.emit('login-response', registered); // vraceni odpovedi na clienta
@@ -26,7 +26,7 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
 });
 //2. poslani dosavadniho hlasovani SM
 app.io.route('votes-request', function(req) {
-  var userInfo = modelInstance.isRegistered(req.data).user;
+  var userInfo = modelInstance.getUser(req.data);
   var data = null;
   if (userInfo) {
     var usInfo = server.getUS(userInfo.team);

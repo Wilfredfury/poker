@@ -32,8 +32,8 @@ traineeApp.Core.prototype.init = function () {
   // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)  
   this.io.on('login-response', function (data) {
     _this.view.loaderHide();
-    if (data.success) {
-      _this.user = new traineeApp.User(data.user);
+    if (data) {
+      _this.user = new traineeApp.User(data);
       localStorage.setItem(loginID, _this.user.email);
       _this.initBoth();
       _this.view.login();
