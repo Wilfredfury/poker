@@ -98,6 +98,11 @@ traineeApp.Core.prototype.initBoth = function(){
     _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);    
     _this.view.wait();
   });
+  //uspesne aktualizece uzivatelu z TP
+  this.io.on('updateusers-response', function(data){
+    _this.view.flashMsg("flashMsg", "User update was successfully!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
+    _this.view.loaderHide();
+  });
 };
 
 /**
@@ -141,6 +146,7 @@ traineeApp.Core.prototype.initLogoutButton = function () {
   });
 };
 
+
 /**
  * inicializace tlacitek pro vyber user story scrummasterem
  */
@@ -149,6 +155,11 @@ traineeApp.Core.prototype.initUSListButtons = function () {
   $('#USListBtn').click(function () {
     _this.view.loaderShow();
     _this.io.emit('usList-request', _this.user.email);
+  });
+
+  $('#UpdateUsers').click(function () {
+    _this.view.loaderShow();
+    _this.io.emit('updateusers-request', null);
   });
 
   $('.USbtn').click(function () {

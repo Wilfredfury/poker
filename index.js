@@ -126,5 +126,13 @@ app.io.route('endVote-request', function(req) {
     req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
   }
 });
+
+//
+app.io.route('updateusers-request', function(req){
+  //update uzivatelu z TP
+
+  req.io.emit('updateusers-response', null);
+});
+
 console.log('listening at localhost:4987');
 app.listen(4987, "0.0.0.0"); // spusteni aplikace na portu 4987

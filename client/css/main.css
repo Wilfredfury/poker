@@ -130,6 +130,9 @@ body {
     font-weight: bold;
     color: white;
     -webkit-appearance: none;
+    margin: 18px 5px;
+    border:none;
+    outline: none;
 }
 
 #logoutBtn {

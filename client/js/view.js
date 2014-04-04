@@ -87,7 +87,7 @@ traineeApp.View.prototype.wait = function() {
 traineeApp.View.prototype.usList = function(us) {
   var maxShowLength = traineeApp.View.maximalDescriptionShowLength;
   this.contentEl.empty();
-  this.contentEl.append('<button class="button" id="USListBtn">request&nbsp;us</button>' + '<table id="USList" class="table"><thead><tr><th>user&nbsp;story</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
+  this.contentEl.append('<button class="button" id="USListBtn">request&nbsp;us</button><button class="button" id="UpdateUsers">update&nbsp;users</button>' + '<table id="USList" class="table"><thead><tr><th>user&nbsp;story</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for ( var key in us) {
     var desc = us[key].description; // predzpracovani popisu
     if (desc.length > maxShowLength){
@@ -96,6 +96,7 @@ traineeApp.View.prototype.usList = function(us) {
     $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
   }
 };
+
 
 /**
  * zahajeni hlasovani pro programatory
