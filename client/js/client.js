@@ -70,7 +70,7 @@ traineeApp.Core.prototype.init = function () {
  * inicializace spolecnych udalosti ze serveru
  */
 traineeApp.Core.prototype.initBoth = function(){
-  _this = this;
+  var _this = this;
   // odhlaseni uzivatele
   this.io.on('logout-response', function (data) {
     _this.view.loaderHide();
@@ -109,7 +109,7 @@ traineeApp.Core.prototype.initBoth = function(){
  * inicializace poslouchani serveru pro scrummastera
  */
 traineeApp.Core.prototype.initSM = function(){
-  _this = this;
+  var _this = this;
   // zaslani dosavadnich hlasu aktivniho hlasovani SM
   this.io.on('votes-response', function (data) {
     if (data) {
