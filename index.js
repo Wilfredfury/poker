@@ -5,16 +5,13 @@
 express = require('express.io');
 server = require('./server/server.js');
 model = require('./server/model.js');
-tp = require('./server/tp.js');
 
 modelInstance = new model.model();
 
 app = express();
 app.http().io();
 app.use(express.static('client')); // pouziti adresare s obsahem pro clienta
-tp.getUsers(function(users, teamUsers) { // init modelu
-  modelInstance.load(users, teamUsers);
-});
+modelInstance.load();
 // 1. prihlaseni a predani info o uzivateli zpatky
 app.io.route('login-request', function(req) { // hlidani requestu z clienta
   req.session = req.session || {}; // pokud nema spojeni definovanou session, ulozit object do req.session
@@ -24,16 +21,13 @@ app.io.route('login-request', function(req) { // hlidani requestu z clienta
   var registered = modelInstance.getUser(req.session.user);
   if (registered) {
     server.addUser(req);
-  }
-  // test US
-  if (registered){
     req.io.emit('login-response', registered); // vraceni odpovedi na clienta
     console.log(server.getUserList()); // vypis online uzivatelu    
   }
 });
 //2. poslani dosavadniho hlasovani SM
 app.io.route('votes-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data);
+  var userInfo = server.getUser(req.data);
   var data = null;
   if (userInfo) {
     var usInfo = server.getUS(userInfo.team);
@@ -45,34 +39,33 @@ app.io.route('votes-request', function(req) {
 });
 // (2). kontrola aktivniho hlasovani po prihlaseni
 app.io.route('loginVote-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data);
+  var userInfo = server.getUser(req.data);
   if (userInfo) {
-    var usInfo = server.getUS(userInfo.team);
-    if (usInfo) {
-      tp.getUS(usInfo, function(usTP){
-        if (usTP){
-          req.io.emit('startVote-response', modelInstance.getUS(usTP));
+    var usInfoID = server.getUS(userInfo.team);
+    if (usInfoID) {
+      modelInstance.getUS(usInfoID, function(usInfo) {
+        if (usInfo) {
+          req.io.emit('startVote-response', usInfo);
           if (userInfo.role == model.model.roleTypes.sm) {
             var votes = server.getVotes(userInfo.team);
             if (votes && votes != {}) { // pokud nemame co zobrazit, tak nebudeme
               for ( var key in votes) { // zopakovani prvniho hlasovani v tabulce pro zobrazeni hlasovani
                 req.io.emit('valueVote-response', {
-                    voted : votes[key],
-                    votedName : key
-                  }
-                );
+                  voted : votes[key],
+                  votedName : key
+                });
                 break;
               }
             }
-          }          
+          }
         }
       });
     }
   }
 });
-//(2-6). odhlaseni uzivatele odebranim ze seznamu
+// (2-6). odhlaseni uzivatele odebranim ze seznamu
 app.io.route('logout-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data);
+  var userInfo = server.getUser(req.data);
   if (userInfo) {
     server.removeUser(userInfo.team, userInfo.email);
     req.io.emit('logout-response');
@@ -80,44 +73,39 @@ app.io.route('logout-request', function(req) {
 });
 //(2-6). pozadavek obnoveni uzivatelu od SM
 app.io.route('updateusers-request', function(req){
-  tp.getUsers(function(users, teamUsers) {
-    modelInstance.load(users, teamUsers);
-  });  
+  modelInstance.load(users, teamUsers);
 });
 //3. poslani seznamu us sm
 app.io.route('usList-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data);
+  var userInfo = server.getUser(req.data);
   if (userInfo) {
-    tp.getAllTeamUS(userInfo.team, function(usTP){
-      req.io.emit('usList-response', modelInstance.getUSList(usTP));      
+    modelInstance.getUSList(userInfo.team, function(usList){
+      req.io.emit('usList-response', usList);      
     });
   }
 });
 // 4. SM zvolil us, poslani informaci o dane us vsem z tymu
 app.io.route('startVote-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data.email);
+  var userInfo = server.getUser(req.data.email);
   if (userInfo) {
-    tp.getUS(req.data.usid, function(usTP) {
-      if (usTP) {
-        var usInfo = modelInstance.getUS(usTP);
-        if (usInfo) {
-          server.addUS(userInfo.team, usInfo.titleID);
-          var teamList = server.getUsers(userInfo.team);
-          for ( var key in teamList) {
-            var usReq = server.getUserSocket(userInfo.team, key);
-            if (usReq) {
-              usReq.io.emit('startVote-response', modelInstance.getUS(usTP));
-            }
+    modelInstance.getUS(req.data.usid, function(usInfo) {
+      if (usInfo) {
+        server.addUS(userInfo.team, usInfo.titleID);
+        var teamList = server.getUsers(userInfo.team);
+        for ( var key in teamList) {
+          var usReq = server.getUserSocket(userInfo.team, key);
+          if (usReq) {
+            usReq.io.emit('startVote-response', usInfo);
           }
-          console.log(server.getUSList()); // vypis aktivnich hlasovani
         }
+        console.log(server.getUSList()); // vypis aktivnich hlasovani
       }
     });
   }
 });
 // 5. developeri posilaji sve hlasovani sm
 app.io.route('valueVote-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data.email);
+  var userInfo = server.getUser(req.data.email);
   if (userInfo) {
     server.addVote(userInfo.team, userInfo.name, req.data.value);
     var smSocket = server.getSmSocket(userInfo.team);
@@ -132,13 +120,14 @@ app.io.route('valueVote-request', function(req) {
 });
 //(5-6). SM konci hlasovani
 app.io.route('endVote-request', function(req) {
-  var userInfo = modelInstance.getUser(req.data.email);
+  var userInfo = server.getUser(req.data.email);
+  var response = null;
   if (userInfo) {
     if (req.data.value) { // spravne ukonceni, odesilame vysledek
-      server.sendVoteTP(server.getUS(userInfo.team), req.data.value);
+      modelInstance.sendVoteTP(server.getUS(userInfo.team), req.data.value);
     }
     server.removeUS(userInfo.team);
-    
+
     var teamList = server.getUsers(userInfo.team);
     for ( var key in teamList) {
       var usReq = server.getUserSocket(userInfo.team, key);
@@ -148,13 +137,6 @@ app.io.route('endVote-request', function(req) {
     }
     req.io.emit('usList-response', modelInstance.getUSList(userInfo.team));
   }
-});
-
-//
-app.io.route('updateusers-request', function(req){
-  //update uzivatelu z TP
-
-  req.io.emit('updateusers-response', null);
 });
 
 console.log('listening at localhost:4987');

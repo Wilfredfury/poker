@@ -25,6 +25,23 @@ exports.addUser = function(req) {
  * 
  * @param user - objekt uzivatele, ktery ma byt odhlasen
  */
+exports.getUser = function(email) {
+  for (var key in exports.usersList) {
+    for (var inKey in exports.usersList[key]) {
+      if (exports.usersList[key][inKey] == email) {
+        var user = exports.usersList[key][inKey];
+        user.team = key;
+        return user;
+      }
+    }
+  }
+  return null;
+};
+/**
+ * odebrani uzivatele ze seznamu prihlasenych uzivatelu
+ * 
+ * @param user - objekt uzivatele, ktery ma byt odhlasen
+ */
 exports.removeUser = function(team, email) {
   if (exports.usersList[team]) {
     delete exports.usersList[team][email];
@@ -156,12 +173,3 @@ exports.getVotes = function(team) {
   }
 };
 
-/**
- * odesle vysledek hlasovani o US na TP
- * 
- * @param usID - ID user story, o ktere se hlasovalo
- * @param value - vysledek hlasovani
- */
-exports.sendVoteTP = function(usID, value){
-
-};

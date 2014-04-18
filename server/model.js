@@ -1,3 +1,4 @@
+tp = require('./tp.js');
 /**
  * Modul pro komunikaci se serverem
  */
@@ -14,27 +15,30 @@ model.prototype.setUsers = function(users) {
   this.users = users;
 };
 
-model.prototype.load = function(usersTP, teamUsersTP) {
-  usersTP = JSON.parse(usersTP).Items;
-  teamUsersTP = JSON.parse(teamUsersTP).Items;
-  users = [];
-  for (key = 0; key < usersTP.length; key++) {
-    var teamTP = [];
-    for (inKey = 0; inKey < teamUsersTP.length; inKey++) {
-      if (usersTP && usersTP[key].Id == teamUsersTP[inKey].User.Id) {
-        teamTP.push(teamUsersTP[inKey].Team.Name);
-        teamUsersTP.splice(inKey,1);
+model.prototype.load = function() {
+  _this = this;
+  tp.getUsers(function(usersTP, teamUsersTP) {
+    usersTP = JSON.parse(usersTP).Items;
+    teamUsersTP = JSON.parse(teamUsersTP).Items;
+    users = [];
+    for (key = 0; key < usersTP.length; key++) {
+      var teamTP = [];
+      for (inKey = 0; inKey < teamUsersTP.length; inKey++) {
+        if (usersTP && usersTP[key].Id == teamUsersTP[inKey].User.Id) {
+          teamTP = teamUsersTP[inKey].Team.Name;
+          teamUsersTP.splice(inKey, 1);
+          break;
+        }
       }
+      users[key] = {
+        name : usersTP[key].FirstName + ' ' + usersTP[key].LastName,
+        team : teamTP,
+        email : usersTP[key].Email,
+        role : usersTP[key].Role.Name
+      };
     }
-    users[key] = {
-      name : usersTP[key].FirstName + ' ' + usersTP[key].LastName,
-      teamChoice : teamTP,
-      team : null,
-      email : usersTP[key].Email,
-      role : usersTP[key].Role.Name
-    };
-  }
-  this.setUsers(users);
+    _this.setUsers(users);
+  });
 };
 
 model.prototype.getUser = function(email) {
@@ -67,11 +71,10 @@ model.prototype.getRole = function(email) {
  *          userStories z Target processu daneho tymu
  * @returns object - upraveny seznam user stories daneho tymu
  */
-model.prototype.getUSList = function(userStoriesTP) {
-  console.log(userStoriesTP);
+model.prototype.getUSList = function(team, cb) {
+  tp.getAllTeamUS(team, function(userStoriesTP){
   userStoriesTP = JSON.parse(userStoriesTP).Items;
   if (userStoriesTP) {
-    console.log(JSON.stringify(userStoriesTP));
     var usTP = [ {
       team : userStoriesTP[0].Team.Name,
       us : []
@@ -88,12 +91,11 @@ model.prototype.getUSList = function(userStoriesTP) {
         type : usName
       });
     }
-    console.log('getAllUS');
-    console.log(usTP);
-    return usTP;
+    return cb(usTP);
   } else {
     return null;
   }
+  });
 };
 
 /**
@@ -103,7 +105,8 @@ model.prototype.getUSList = function(userStoriesTP) {
  *          hledana user Story
  * @returns object - upravena user story
  */
-model.prototype.getUS = function(userStoriesTP) {
+model.prototype.getUS = function(usID, cb) {
+  tp.getUS(usID, function(userStoriesTP) {
     if (userStoriesTP){
       userStoriesTP = JSON.parse(userStoriesTP).Items[0];
       var usName = null;
@@ -116,10 +119,11 @@ model.prototype.getUS = function(userStoriesTP) {
         description : userStoriesTP.Description,
         type : usName
       };
-      return usTP;      
+      return cb(usTP);      
     } else {
-      return null;
+      return cb(null);
     }
+  });
 };
 /**
  * vrati vsechny cleny daneho tymu
@@ -137,4 +141,20 @@ model.prototype.getTeam = function(team) {
   }
   return aTeam;
 };
+
+/**
+ * odesle vysledek hlasovani o US na TP
+ * 
+ * @param usID - ID user story, o ktere se hlasovalo
+ * @param value - vysledek hlasovani
+ */
+model.prototype.sendVoteTP = function(usID, value, cb){
+  tp.setUserStoryEffort(usID, value, function(response){
+    return cb(response);
+  });
+};
+
+model.prototype.init = function(){
+};
+
 exports.model = model;
