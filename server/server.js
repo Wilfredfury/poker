@@ -12,13 +12,16 @@ exports.addUser = function(req, selectedTeamId, oUser) {
   var selectedTeam = oUser.teams[selectedTeamId];
   var selectedRole = oUser.roles[selectedTeamId];
 
+
+
   if (!exports.usersList[selectedTeam]) {
     exports.usersList[selectedTeam] = {};
   }
   exports.usersList[selectedTeam][oUser.email] = {
     name : oUser.name,
     role : selectedRole,
-    socket : req
+    socket : req,
+    teamId : selectedTeamId
   };
 };
 
@@ -30,13 +33,16 @@ exports.addUser = function(req, selectedTeamId, oUser) {
 exports.getUser = function(email) {
   for (var key in exports.usersList) {
     for (var inKey in exports.usersList[key]) {
-      if (exports.usersList[key][inKey] == email) {
+      if (inKey == email) {
         var user = exports.usersList[key][inKey];
         user.team = key;
+        user.email = inKey;
+        delete user.socket;
         return user;
       }
     }
   }
+
   return null;
 };
 /**
@@ -174,4 +180,3 @@ exports.getVotes = function(team) {
     return exports.usList[team].votes;
   }
 };
-

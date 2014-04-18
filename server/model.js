@@ -25,10 +25,9 @@ model.prototype.load = function() {
       var roleTP = [];
       for (inKey = 0; inKey < teamUsersTP.length; inKey++) {
         if (usersTP && usersTP[key].Id == teamUsersTP[inKey].User.Id) {
-          teamTP = teamUsersTP[inKey].Team.Name;
-          roleTP = teamUsersTP[inKey].Role.Name;
+          teamTP.push(teamUsersTP[inKey].Team.Name);
+          roleTP.push(teamUsersTP[inKey].Role.Name);
           teamUsersTP.splice(inKey, 1);
-          break;
         }
       }
       users[key] = {
@@ -74,7 +73,7 @@ model.prototype.getUser = function (email) {
 model.prototype.getUSList = function(team, cb) {
   tp.getAllTeamUS(team, function(userStoriesTP){
     userStoriesTP = JSON.parse(userStoriesTP).Items;
-    if (userStoriesTP) {
+    if (userStoriesTP && userStoriesTP != []) {
       var usTP = [ {
         team : userStoriesTP[0].Team.Name,
         us : []
@@ -91,7 +90,7 @@ model.prototype.getUSList = function(team, cb) {
           type : usName
         });
       }
-      return cb(usTP);
+      return cb(usTP[0].us);
     } else {
       return null;
     }
@@ -106,9 +105,11 @@ model.prototype.getUSList = function(team, cb) {
  * @returns object - upravena user story
  */
 model.prototype.getUS = function(usID, cb) {
+  console.log(usID);
   tp.getUS(usID, function(userStoriesTP) {
+    console.log(userStoriesTP);
+    userStoriesTP = JSON.parse(userStoriesTP).Items[0];
     if (userStoriesTP){
-      userStoriesTP = JSON.parse(userStoriesTP).Items[0];
       var usName = null;
       if (userStoriesTP.EntityType){
         usName = userStoriesTP.EntityType.Name;
@@ -159,24 +160,4 @@ model.prototype.sendVoteTP = function(usID, value, cb){
 model.prototype.init = function(){
 };
 
-exports.model = model;
-/**
- * Nasteveni teamu k uzivateli podle emailu pokud se nastavi uspesne vrati se true
- * @param email
- * @param team
- * @returns {boolean}
- */
-model.prototype.setTeam = function (email, teamId) {
-  var user = this.getUser(email);
-  if (user) {
-    var team = user.teams[teamId];
-    if (team != "undefined") {
-      user.team = team;
-      return user;
-    }
-    else
-      return false;
-  } else
-    return false;
-}
 exports.model = model;

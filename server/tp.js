@@ -2,7 +2,7 @@ request = require('request');
 // https://socialbakers.tpondemand.com/api/v1/Authentication
 var token = "MTo5ODYzMkNFOEU3QjMyRDI5RDQzMjBDNjk0M0EyNEJCRg==";
 // pocet najednou branych uzivatelu
-var pageTaken = 150;
+var pageTaken = 1000;
 //pocet prvnich preskakovanych vysledku  
 var pageSkipped = 0;
 // role_dev = 1;
