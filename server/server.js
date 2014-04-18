@@ -8,14 +8,16 @@ exports.usList = {}; // uklada info o aktivnich US pro hlasovani.
  * 
  * @param req - objekt pro komunikaci klienta a serveru 
  */
-exports.addUser = function(req) {
-  var oUser = modelInstance.getUser(req.session.user);
-  if (!exports.usersList[oUser.team]) {
-    exports.usersList[oUser.team] = {};
+exports.addUser = function(req, selectedTeamId, oUser) {
+  var selectedTeam = oUser.teams[selectedTeamId];
+  var selectedRole = oUser.roles[selectedTeamId];
+
+  if (!exports.usersList[selectedTeam]) {
+    exports.usersList[selectedTeam] = {};
   }
-  exports.usersList[oUser.team][oUser.email] = {
+  exports.usersList[selectedTeam][oUser.email] = {
     name : oUser.name,
-    role : oUser.role,
+    role : selectedRole,
     socket : req
   };
 };

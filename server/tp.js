@@ -34,7 +34,7 @@ exports.getUsers = function(cb) {
  */
 _getTeamUsers = function(users, cb) {
   url = buildUrl(["TeamMembers"], null, {
-    include: "[Team, User]"
+    include: "[Team, User, Role]"
   });
   return request(url, function(err, req, data){
     if (!err){

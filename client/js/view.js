@@ -165,3 +165,18 @@ traineeApp.View.prototype.loaderHide = function(){
   $("#ajax-loader").hide();
 };
 
+
+/**
+ * Vykresleni selectu pro vybrani teamu
+ */
+traineeApp.View.prototype.choiceTeam = function(teams){
+  this.contentEl.empty();
+  var select = '<select id="selectChoice"><option value="-1">Select team...</option>';
+
+  for(var key in teams){
+    select+=('<option value="'+key+'">'+teams[key]+'</option>');
+  }
+  select+='</select>';
+  this.contentEl.append(select+ '<br /><button id="choiceTeamBtn" class="button">Select team</button>');
+};
+

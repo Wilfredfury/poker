@@ -12,27 +12,43 @@ modelInstance = new model.model();
 app = express();
 app.http().io();
 app.use(express.static('client')); // pouziti adresare s obsahem pro clienta
-tp.getUsers(function(users, teamUsers) { // init modelu
+tp.getUsers(function (users, teamUsers) { // init modelu
   modelInstance.load(users, teamUsers);
 });
 // 1. prihlaseni a predani info o uzivateli zpatky
-app.io.route('login-request', function(req) { // hlidani requestu z clienta
+app.io.route('login-request', function (req) { // hlidani requestu z clienta
   req.session = req.session || {}; // pokud nema spojeni definovanou session, ulozit object do req.session
   if (!req.session.user) { // prvni komunikace pres spojeni => prirazeni uzivatele
     req.session.user = req.data.mail;
   }
   var registered = modelInstance.getUser(req.session.user);
   if (registered) {
-    server.addUser(req);
-  }
-  // test US
-  if (registered){
-    req.io.emit('login-response', registered); // vraceni odpovedi na clienta
-    console.log(server.getUserList()); // vypis online uzivatelu    
+    console.log("ssss: "+ JSON.stringify(registered));
+    if (registered.teams.length == 1) {
+      server.addUser(req, 0, registered);//kdyz je tam jeden team je to na pozici 0
+      req.io.emit('login-response', registered); // vraceni odpovedi na clienta
+      console.log(server.getUserList()); // vypis online uzivatelu
+    }
+    else {
+      req.io.emit('choiceTeam-response', registered);//poslani dotazu na vyber teamu
+    }
   }
 });
+
+//7. poslani vybraneho teamu
+app.io.route('choiceTeam-request', function (req) {//cekani na prijeti, ktery team si vybral
+  var oUser = modelInstance.setTeam(req.data.email, req.data.selectedTeamId);
+  if (oUser) {
+    server.addUser(req, req.data.selectedTeamId, oUser);
+    req.io.emit('login-response', oUser); // vraceni odpovedi na clienta
+    console.log(server.getUserList()); // vypis online uzivatelu
+  }
+});
+
+
+
 //2. poslani dosavadniho hlasovani SM
-app.io.route('votes-request', function(req) {
+app.io.route('votes-request', function (req) {
   var userInfo = modelInstance.getUser(req.data);
   var data = null;
   if (userInfo) {
@@ -44,34 +60,34 @@ app.io.route('votes-request', function(req) {
   req.io.emit('votes-response', data);
 });
 // (2). kontrola aktivniho hlasovani po prihlaseni
-app.io.route('loginVote-request', function(req) {
+app.io.route('loginVote-request', function (req) {
   var userInfo = modelInstance.getUser(req.data);
   if (userInfo) {
     var usInfo = server.getUS(userInfo.team);
     if (usInfo) {
-      tp.getUS(usInfo, function(usTP){
-        if (usTP){
+      tp.getUS(usInfo, function (usTP) {
+        if (usTP) {
           req.io.emit('startVote-response', modelInstance.getUS(usTP));
           if (userInfo.role == model.model.roleTypes.sm) {
             var votes = server.getVotes(userInfo.team);
             if (votes && votes != {}) { // pokud nemame co zobrazit, tak nebudeme
-              for ( var key in votes) { // zopakovani prvniho hlasovani v tabulce pro zobrazeni hlasovani
+              for (var key in votes) { // zopakovani prvniho hlasovani v tabulce pro zobrazeni hlasovani
                 req.io.emit('valueVote-response', {
-                    voted : votes[key],
-                    votedName : key
+                    voted: votes[key],
+                    votedName: key
                   }
                 );
                 break;
               }
             }
-          }          
+          }
         }
       });
     }
   }
 });
 //(2-6). odhlaseni uzivatele odebranim ze seznamu
-app.io.route('logout-request', function(req) {
+app.io.route('logout-request', function (req) {
   var userInfo = modelInstance.getUser(req.data);
   if (userInfo) {
     server.removeUser(userInfo.team, userInfo.email);
@@ -79,31 +95,31 @@ app.io.route('logout-request', function(req) {
   }
 });
 //(2-6). pozadavek obnoveni uzivatelu od SM
-app.io.route('updateusers-request', function(req){
-  tp.getUsers(function(users, teamUsers) {
+app.io.route('updateusers-request', function (req) {
+  tp.getUsers(function (users, teamUsers) {
     modelInstance.load(users, teamUsers);
-  });  
+  });
 });
 //3. poslani seznamu us sm
-app.io.route('usList-request', function(req) {
+app.io.route('usList-request', function (req) {
   var userInfo = modelInstance.getUser(req.data);
   if (userInfo) {
-    tp.getAllTeamUS(userInfo.team, function(usTP){
-      req.io.emit('usList-response', modelInstance.getUSList(usTP));      
+    tp.getAllTeamUS(userInfo.team, function (usTP) {
+      req.io.emit('usList-response', modelInstance.getUSList(usTP));
     });
   }
 });
 // 4. SM zvolil us, poslani informaci o dane us vsem z tymu
-app.io.route('startVote-request', function(req) {
+app.io.route('startVote-request', function (req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
-    tp.getUS(req.data.usid, function(usTP) {
+    tp.getUS(req.data.usid, function (usTP) {
       if (usTP) {
         var usInfo = modelInstance.getUS(usTP);
         if (usInfo) {
           server.addUS(userInfo.team, usInfo.titleID);
           var teamList = server.getUsers(userInfo.team);
-          for ( var key in teamList) {
+          for (var key in teamList) {
             var usReq = server.getUserSocket(userInfo.team, key);
             if (usReq) {
               usReq.io.emit('startVote-response', modelInstance.getUS(usTP));
@@ -116,31 +132,31 @@ app.io.route('startVote-request', function(req) {
   }
 });
 // 5. developeri posilaji sve hlasovani sm
-app.io.route('valueVote-request', function(req) {
+app.io.route('valueVote-request', function (req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
     server.addVote(userInfo.team, userInfo.name, req.data.value);
     var smSocket = server.getSmSocket(userInfo.team);
     if (smSocket) {
       smSocket.io.emit('valueVote-response', {
-          voted : req.data.value,
-          votedName : userInfo.name
+          voted: req.data.value,
+          votedName: userInfo.name
         }
       );
     }
   }
 });
 //(5-6). SM konci hlasovani
-app.io.route('endVote-request', function(req) {
+app.io.route('endVote-request', function (req) {
   var userInfo = modelInstance.getUser(req.data.email);
   if (userInfo) {
     if (req.data.value) { // spravne ukonceni, odesilame vysledek
       server.sendVoteTP(server.getUS(userInfo.team), req.data.value);
     }
     server.removeUS(userInfo.team);
-    
+
     var teamList = server.getUsers(userInfo.team);
-    for ( var key in teamList) {
+    for (var key in teamList) {
       var usReq = server.getUserSocket(userInfo.team, key);
       if (usReq) {
         usReq.io.emit('endVote-response', req.data.value);
@@ -151,7 +167,7 @@ app.io.route('endVote-request', function(req) {
 });
 
 //
-app.io.route('updateusers-request', function(req){
+app.io.route('updateusers-request', function (req) {
   //update uzivatelu z TP
 
   req.io.emit('updateusers-response', null);

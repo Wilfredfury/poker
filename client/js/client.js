@@ -52,6 +52,17 @@ traineeApp.Core.prototype.init = function () {
       _this.view.flashMsg("flashMsg", "User not found!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);
     }
   });
+
+  this.io.on('choiceTeam-response', function (data) {
+    _this.view.loaderHide();
+
+    var email = data.email;
+    var teams = data.teams;
+
+    _this.view.choiceTeam(teams);
+    _this.initChoiceTeam(email);
+  });
+
   
   if (localStorage.getItem(loginID)) {
     email = localStorage.getItem(loginID);
@@ -65,6 +76,19 @@ traineeApp.Core.prototype.init = function () {
     this.initFormButton();
   }
 };
+
+
+/**
+ * incializace vybrani teamu
+ */
+traineeApp.Core.prototype.initChoiceTeam = function (email) {
+  var _this = this;
+  $('#choiceTeamBtn').click(function () {
+    var selectedTeamId = $("#selectChoice").val();
+    _this.io.emit('choiceTeam-request', {email: email, selectedTeamId: selectedTeamId});
+  });
+};
+
 
 /**
  * inicializace spolecnych udalosti ze serveru
