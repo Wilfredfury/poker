@@ -144,7 +144,7 @@ traineeApp.View.prototype.valueVote = function(votes) {
   }
   if (num){
     med = med / num;
-    med = Number(med.toFixed(2));    
+    med = parseInt(med.toFixed(2));    
   } else {
     med = dunno;
   }

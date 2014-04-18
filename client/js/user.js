@@ -11,6 +11,6 @@ traineeApp.User = function(user) {
 };
 
 traineeApp.User.roleTypes = {
-  dev : 'developer',
-  sm : 'SCRUMmaster'
+  dev : 'Developer',
+  sm : 'Scrum Master'
 };

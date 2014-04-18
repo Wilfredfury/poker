@@ -3,86 +3,39 @@
  */
 var model = function() {
   this.users = null;
-  this.userStories = null;
-  this.load();
 };
 
 model.roleTypes = {
-  dev : 'developer',
-  sm : 'SCRUMmaster'
+  dev : 'Developer',
+  sm : 'Scrum Master'
 };
 
 model.prototype.setUsers = function(users) {
   this.users = users;
 };
 
-model.prototype.setUserStories = function(us) {
-  this.userStories = us;
-};
-
-model.prototype.load = function() {
-  users = [ {
-    name : "test test",
-    team : "masterA",
-    email : "test@test.cz",
-    role : "SCRUMmaster"
-  }, {
-    name : "Tomas Balicek",
-    team : "masterA",
-    email : "tomas.balicek@socialbakers.com",
-    role : "developer"
-  }, {
-    name : "Lukas Cerny",
-    team : "masterA",
-    email : "lukas.cerny@socialbakers.com",
-    role : "developer"
-  }, {
-    name : "Tomas Roch",
-    team : "masterA",
-    email : "tomas.roch@socialbakers.com",
-    role : "developer"
-  }, {
-    name : "Tomas Krasny",
-    team : "masterB",
-    email : "tomas.krasny@socialbakers.com",
-    role : "developer"
-  } ];
-
-  userStories = [
-      {
-        team : 'masterA',
-        us : [
-            {
-              title : 'user story 1',
-              titleID : '#32378',
-              description : 'nad sto znaku useknout nad sto znnad sto znnadnad sto znnad stosto znnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad stoznnad sto toto uz je prilis',
-              type : 'us'
-            }, {
-              title : 'debug 00001',
-              titleID : '#00001',
-              description : 'viewUS vraci spatne hodnoty',
-              type : 'db'
-            } ]
-      }, {
-        team : 'masterB',
-        us : [ {
-          title : 'user story 3',
-          titleID : '#55221',
-          description : 'sm a dev tvorit tym',
-          type : 'us'
-        }, {
-          title : 'deeeee 00002',
-          titleID : '#00002',
-          description : 'ztrata dat pri predani funkci',
-          type : 'db'
-        } ]
-      } ];
-
+model.prototype.load = function(usersTP, teamUsersTP) {
+  usersTP = JSON.parse(usersTP).Items;
+  teamUsersTP = JSON.parse(teamUsersTP).Items;
+  users = [];
+  for (key = 0; key < usersTP.length; key++) {
+    var teamTP = [];
+    for (inKey = 0; inKey < teamUsersTP.length; inKey++) {
+      if (usersTP && usersTP[key].Id == teamUsersTP[inKey].User.Id) {
+        teamTP.push(teamUsersTP[inKey].Team.Name);
+        teamUsersTP.splice(inKey,1);
+      }
+    }
+    users[key] = {
+      name : usersTP[key].FirstName + ' ' + usersTP[key].LastName,
+      teamChoice : teamTP,
+      team : null,
+      email : usersTP[key].Email,
+      role : usersTP[key].Role.Name
+    };
+  }
   this.setUsers(users);
-  this.setUserStories(userStories);
 };
-
-
 
 model.prototype.getUser = function(email) {
   for ( var key in this.users) {
@@ -93,8 +46,10 @@ model.prototype.getUser = function(email) {
 };
 
 /**
- * vrati roli uzivatele podle mailu(bran jako ID) 
- * @param email mail uzivatele
+ * vrati roli uzivatele podle mailu(bran jako ID)
+ * 
+ * @param email
+ *          mail uzivatele
  * @returns string - role uzivatele
  */
 model.prototype.getRole = function(email) {
@@ -106,39 +61,71 @@ model.prototype.getRole = function(email) {
 };
 
 /**
- * vrati vsechny user stories teamu 
- * @param team - team pro vybrani user stories
- * @returns object - seznam user stories daneho tymu
+ * vrati vsechny user stories teamu
+ * 
+ * @param userStoriesTP -
+ *          userStories z Target processu daneho tymu
+ * @returns object - upraveny seznam user stories daneho tymu
  */
-model.prototype.getUSList = function(team) {
-  for ( var key in this.userStories) {
-    if (this.userStories[key].team === team) {
-      return this.userStories[key].us;
+model.prototype.getUSList = function(userStoriesTP) {
+  console.log(userStoriesTP);
+  userStoriesTP = JSON.parse(userStoriesTP).Items;
+  if (userStoriesTP) {
+    console.log(JSON.stringify(userStoriesTP));
+    var usTP = [ {
+      team : userStoriesTP[0].Team.Name,
+      us : []
+    } ];
+    for ( var key = 0; key < userStoriesTP.length; key++) {
+      var usName = null;
+      if (userStoriesTP[key].EntityType) {
+        usName = userStoriesTP[key].EntityType.Name;
+      }
+      usTP[0].us.push({
+        title : userStoriesTP[key].Name,
+        titleID : userStoriesTP[key].Id,
+        description : userStoriesTP[key].Description,
+        type : usName
+      });
     }
+    console.log('getAllUS');
+    console.log(usTP);
+    return usTP;
+  } else {
+    return null;
   }
 };
 
 /**
  * vrati jednu US z listu podle ID
- * @param team - tym hledane user story
- * @param titleID - ID hledane user story
- * @returns object - user story ze seznamu podle ID
+ * 
+ * @param userStoriesTP -
+ *          hledana user Story
+ * @returns object - upravena user story
  */
-model.prototype.getUS = function(team, titleID) {
-  for ( var key in this.userStories) {
-    if (this.userStories[key].team === team) {
-      for ( var keyIn in this.userStories[key].us) {
-        if (this.userStories[key].us[keyIn].titleID === titleID) {
-          return this.userStories[key].us[keyIn];
-        }
+model.prototype.getUS = function(userStoriesTP) {
+    if (userStoriesTP){
+      userStoriesTP = JSON.parse(userStoriesTP).Items[0];
+      var usName = null;
+      if (userStoriesTP.EntityType){
+        usName = userStoriesTP.EntityType.Name;
       }
-      return;
+      var usTP = {
+        title : userStoriesTP.Name,
+        titleID : userStoriesTP.Id,
+        description : userStoriesTP.Description,
+        type : usName
+      };
+      return usTP;      
+    } else {
+      return null;
     }
-  }
 };
 /**
  * vrati vsechny cleny daneho tymu
- * @param team - hledany tym
+ * 
+ * @param team -
+ *          hledany tym
  * @returns array - clenove daneho tymu
  */
 model.prototype.getTeam = function(team) {
