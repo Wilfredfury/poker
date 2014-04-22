@@ -69,7 +69,7 @@ app.io.route('votes-request', function (req) {
 });
 // (2). kontrola aktivniho hlasovani po prihlaseni
 app.io.route('loginVote-request', function (req) {
-  var userInfo = server.getUser(req.data);
+  var userInfo = modelInstance.getUser(req.data);
   if (userInfo) {
     var usInfoID = server.getUS(userInfo.team);
     if (usInfoID) {
@@ -96,6 +96,7 @@ app.io.route('loginVote-request', function (req) {
 // (2-6). odhlaseni uzivatele odebranim ze seznamu
 app.io.route('logout-request', function (req) {
   var userInfo = server.getUser(req.data);
+  console.log(JSON.stringify(userInfo));
   if (userInfo) {
     server.removeUser(userInfo.team, userInfo.email);
     req.io.emit('logout-response');
