@@ -28,7 +28,7 @@ traineeApp.Core.prototype.init = function () {
   var _this = this;
   var loginID = 'traineeAppmail';
   var email = "";
-  
+
   // prihlaseni uzivatele a zkontrolovani stavu (aktivni hlasovani)  
   this.io.on('login-response', function (data) {
     _this.view.loaderHide();
@@ -39,7 +39,7 @@ traineeApp.Core.prototype.init = function () {
       _this.view.login();
       _this.initLogoutButton();
       _this.view.flashMsg("flashMsg", "Successfuly logged in!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
-      if (_this.user.role == traineeApp.User.roleTypes.sm) {     
+      if (_this.user.role == traineeApp.User.roleTypes.sm) {
         _this.initSM();
         _this.view.loaderShow();
         _this.io.emit('votes-request', _this.user.email);
@@ -63,7 +63,7 @@ traineeApp.Core.prototype.init = function () {
     _this.initChoiceTeam(email);
   });
 
-  
+
   if (localStorage.getItem(loginID)) {
     email = localStorage.getItem(loginID);
     this.view.loaderShow();
@@ -85,7 +85,10 @@ traineeApp.Core.prototype.initChoiceTeam = function (email) {
   var _this = this;
   $('#choiceTeamBtn').click(function () {
     var selectedTeamId = $("#selectChoice").val();
-    _this.io.emit('choiceTeam-request', {email: email, selectedTeamId: selectedTeamId});
+    if (selectedTeamId == -1)
+      _this.view.flashMsg("flashMsg", "You have to select a team!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);
+    else
+      _this.io.emit('choiceTeam-request', {email: email, selectedTeamId: selectedTeamId});
   });
 };
 
@@ -93,7 +96,7 @@ traineeApp.Core.prototype.initChoiceTeam = function (email) {
 /**
  * inicializace spolecnych udalosti ze serveru
  */
-traineeApp.Core.prototype.initBoth = function(){
+traineeApp.Core.prototype.initBoth = function () {
   var _this = this;
   // odhlaseni uzivatele
   this.io.on('logout-response', function (data) {
@@ -115,15 +118,15 @@ traineeApp.Core.prototype.initBoth = function(){
     _this.view.loaderHide();
     var message = "The vote has ended with result " + data + "."; // oznameni o vysledku hlasovani
     var type = traineeApp.View.messageTypes.success; // typ zobrazeni zpravy
-    if (!data){ // nemame vysledek SM ukoncil predcasne
+    if (!data) { // nemame vysledek SM ukoncil predcasne
       message = "The vote has ended without result because SM ended it.";
       type = traineeApp.View.messageTypes.warning;
     }
-    _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);    
+    _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);
     _this.view.wait();
   });
   //uspesne aktualizece uzivatelu z TP
-  this.io.on('updateusers-response', function(data){
+  this.io.on('updateusers-response', function (data) {
     _this.view.flashMsg("flashMsg", "User update was successfully!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
     _this.view.loaderHide();
   });
@@ -132,7 +135,7 @@ traineeApp.Core.prototype.initBoth = function(){
 /**
  * inicializace poslouchani serveru pro scrummastera
  */
-traineeApp.Core.prototype.initSM = function(){
+traineeApp.Core.prototype.initSM = function () {
   var _this = this;
   // zaslani dosavadnich hlasu aktivniho hlasovani SM
   this.io.on('votes-response', function (data) {
@@ -231,7 +234,7 @@ traineeApp.Core.prototype.initVoteButtons = function () {
 /**
  * inicializace tlacitka pro prihlaseni
  */
-traineeApp.Core.prototype.initFormButton = function() {
+traineeApp.Core.prototype.initFormButton = function () {
   var _this = this;
   this.view.formEl.submit(function (event) {
     event.preventDefault();

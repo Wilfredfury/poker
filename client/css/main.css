@@ -135,6 +135,25 @@ body {
     outline: none;
 }
 
+.button-select{
+    cursor: pointer;
+    width: 25%;
+    padding: 0 15px;
+    line-height: 40px;
+    height: 40px;
+    background-color: rgb(184, 0, 255);
+    border: 0;
+    margin: 10px 0;
+    font-size: 20px;
+    /*text-transform: uppercase;*/
+    font-weight: bold;
+    color: white;
+    /*-webkit-appearance: none;*/
+    margin: 18px 5px;
+    border:none;
+    outline: none;
+}
+
 #logoutBtn {
     background-color: rgb(56, 56, 56);
     border: 0;
@@ -349,7 +368,7 @@ body {
 }
 
 @media (max-width: 650px) {
-    .button, #login-email {
+    .button, #login-email, .button-select {
         width: 80%;
         margin: 3% 5%;
     }
