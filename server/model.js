@@ -14,9 +14,9 @@ model.prototype.setUsers = function(users) {
   this.users = users;
 };
 
-model.prototype.load = function() {
+model.prototype.load = function(cbResponse) {
   _this = this;
-  tp.getUsers(function(usersTP, teamUsersTP) {
+  tp.getUsers(function(usersTP, teamUsersTP, cbResponse) {
     usersTP = JSON.parse(usersTP).Items;
     teamUsersTP = JSON.parse(teamUsersTP).Items;
     users = [];
@@ -38,7 +38,9 @@ model.prototype.load = function() {
       };
     }
     _this.setUsers(users);
-  });
+    console.log('model loaded ' + users.length + ' users');
+    cbResponse();
+  },cbResponse);
 };
 model.prototype.getUser = function (email) {
   for (var key in this.users) {
@@ -105,9 +107,7 @@ model.prototype.getUSList = function(team, cb) {
  * @returns object - upravena user story
  */
 model.prototype.getUS = function(usID, cb) {
-  console.log(usID);
   tp.getUS(usID, function(userStoriesTP) {
-    console.log(userStoriesTP);
     userStoriesTP = JSON.parse(userStoriesTP).Items[0];
     if (userStoriesTP){
       var usName = null;

@@ -33,7 +33,7 @@ traineeApp.Core.prototype.init = function () {
   this.io.on('login-response', function (data) {
     _this.view.loaderHide();
     if (data) {
-      _this.user = new traineeApp.User(data);
+      _this.user = data;
       localStorage.setItem(loginID, _this.user.email);
       _this.initBoth();
       _this.view.login();
@@ -45,7 +45,6 @@ traineeApp.Core.prototype.init = function () {
         _this.io.emit('votes-request', _this.user.email);
       } else {
         _this.view.wait();
-//        _this.view.loaderShow(); nemusi prijit odpoved
         _this.io.emit('loginVote-request', _this.user.email);
       }
     } else {
@@ -55,14 +54,9 @@ traineeApp.Core.prototype.init = function () {
 
   this.io.on('choiceTeam-response', function (data) {
     _this.view.loaderHide();
-
-    var email = data.email;
-    var teams = data.teams;
-
-    _this.view.choiceTeam(teams);
-    _this.initChoiceTeam(email);
+    _this.view.choiceTeam(data.teams);
+    _this.initChoiceTeam(data.email);
   });
-
 
   if (localStorage.getItem(loginID)) {
     email = localStorage.getItem(loginID);
@@ -77,7 +71,6 @@ traineeApp.Core.prototype.init = function () {
   }
 };
 
-
 /**
  * incializace vybrani teamu
  */
@@ -85,13 +78,17 @@ traineeApp.Core.prototype.initChoiceTeam = function (email) {
   var _this = this;
   $('#choiceTeamBtn').click(function () {
     var selectedTeamId = $("#selectChoice").val();
-    if (selectedTeamId == -1)
-      _this.view.flashMsg("flashMsg", "You have to select a team!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);
-    else
-      _this.io.emit('choiceTeam-request', {email: email, selectedTeamId: selectedTeamId});
+    if (selectedTeamId == -1){
+      _this.view.flashMsg("flashMsg", "You have to select a team!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);      
+    }
+    else {
+      _this.io.emit('choiceTeam-request', {
+        email: email, 
+        selectedTeamId: selectedTeamId
+      });      
+    }
   });
 };
-
 
 /**
  * inicializace spolecnych udalosti ze serveru
@@ -110,8 +107,12 @@ traineeApp.Core.prototype.initBoth = function () {
   // zacatek hlasovani
   this.io.on('startVote-response', function (data) {
     _this.view.loaderHide();
-    _this.view.startVote(data);
-    _this.initVoteButtons();
+    if (data){
+      _this.view.startVote(data);
+      _this.initVoteButtons();      
+    } else {
+      _this.view.flashMsg("flashMsg", "Could not find US!", traineeApp.View.messageTypes.error, _this.timeToHideFlash);      
+    }
   });
   // uspesny konec hlasovani
   this.io.on('endVote-response', function (data) {
@@ -124,11 +125,6 @@ traineeApp.Core.prototype.initBoth = function () {
     }
     _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);
     _this.view.wait();
-  });
-  //uspesne aktualizece uzivatelu z TP
-  this.io.on('updateusers-response', function (data) {
-    _this.view.flashMsg("flashMsg", "User update was successfully!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
-    _this.view.loaderHide();
   });
 };
 
@@ -151,6 +147,7 @@ traineeApp.Core.prototype.initSM = function () {
   // zaslani usListu SM
   this.io.on('usList-response', function (data) {
     _this.view.loaderHide();
+//    _this.view.flashMsg("flashMsg", "User stories updated!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
     _this.view.usList(data);
     _this.initUSListButtons();
   });
@@ -159,6 +156,21 @@ traineeApp.Core.prototype.initSM = function () {
     _this.view.loaderHide();
     _this.votes[data.votedName] = parseInt(data.voted);
     _this.view.valueVote(_this.votes);
+  });
+  // aktualizace uzivatelu z TP do modelu serveru
+  this.io.on('updateUsers-response', function (data) {
+    _this.view.loaderHide();
+    _this.view.flashMsg("flashMsg", "Users updated!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
+  });
+  // zobrazeni updatu US na TP
+  this.io.on('endVoteTP-response', function (data) {
+    var message = 'User story effort has been updated successfully on Target Process!';
+    var type = traineeApp.View.messageTypes.success;
+    if (!data){
+      message = 'User story effort has NOT been updated on Target Process!';
+      type = traineeApp.View.messageTypes.error;
+    }
+    _this.view.flashMsg("flashMsg", message, type, _this.timeToHideFlash);
   });
 };
 
@@ -186,7 +198,7 @@ traineeApp.Core.prototype.initUSListButtons = function () {
 
   $('#UpdateUsers').click(function () {
     _this.view.loaderShow();
-    _this.io.emit('updateusers-request', null);
+    _this.io.emit('updateUsers-request', null);
   });
 
   $('.USbtn').click(function () {
@@ -222,7 +234,6 @@ traineeApp.Core.prototype.initVoteButtons = function () {
       _this.view.flashMsg("flashMsg", "You have voted for " + value + ".", traineeApp.View.messageTypes.info, _this.timeToHideFlash);
       listener = 'valueVote-request';
     }
-//    _this.view.loaderShow(); neni odpoved
     _this.io.emit(listener, {
         email: _this.user.email,
         value: value

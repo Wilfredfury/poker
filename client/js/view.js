@@ -90,6 +90,7 @@ traineeApp.View.prototype.usList = function (us) {
   this.contentEl.append('<button class="button" id="USListBtn">request&nbsp;us</button><button class="button" id="UpdateUsers">update&nbsp;users</button>' + '<table id="USList" class="table"><thead><tr><th>user&nbsp;story</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
   for (var key in us) {
     var desc = us[key].description; // predzpracovani popisu
+    desc = ($(desc).text());
     if (desc) {
       if (desc.length > maxShowLength) {
         desc = desc.substr(0, maxShowLength - 3) + '...'; // -3 za '...'
@@ -109,17 +110,22 @@ traineeApp.View.prototype.startVote = function (us) {
   var number = traineeApp.View.numbers; // jednotlive hodnoty pro karty
   var content = '';
   var i = 0; // index prochazeni pole
-
+  var eliminateLast = 0; // pro SM, vyradi posledni volbu (nerozhodno) kvuli TP
+  
   this.contentEl.empty();
   if (app.user.role == traineeApp.User.roleTypes.sm) { // scrummaster
+    eliminateLast = 1;
     this.contentEl.append('<button id="voteEndBtn" class="button">end vote</button>');
   }
   this.contentEl.append('<br /><div id="cards-wrapper"></div>');
-  while (i < number.length) {
+  while (i < number.length - eliminateLast) {
     content += '<div class="cards" data-value="' + number[i] + '">' + number[i] + '</div>';
     i++;
   }
   $('#cards-wrapper').append(content);
+  if (!us.description){
+    us.description = '';
+  }
   this.contentEl.append('<div id="vote-info"><h3><span class="vote-info-header">' + us.titleID + ' ' + us.title + '</span><br /><span class="vote-info-body">' + us.description + '</span></h3></div>');
 };
 
@@ -136,11 +142,12 @@ traineeApp.View.prototype.valueVote = function (votes) {
   $('#voteTable').remove(); // remove a append aby nemusel byt hlidan content.clear() voteTableEl nema smysl stejne probehne dvakrat
   this.contentEl.append('<table id="voteTable" class="table"></table>');
   for (var key in votes) {
+    var iVotesKey = parseInt(votes[key]);
     var votesKey = dunno; // pro vyhodnocovani NaN pouze jednou
-    if (!isNaN(votes[key])) { // do prumeru jdou jen cisla
+    if (!isNaN(iVotesKey)) { // do prumeru jdou jen cisla
       num++;
-      med += votes[key];
-      votesKey = votes[key];
+      med += iVotesKey;
+      votesKey = iVotesKey;
     } // zobrazeni obsahu promenne dunno misto NaN
     content += '<tr><td>' + key + '</td><td>' + votesKey + '</td></tr>';
   }
@@ -166,7 +173,6 @@ traineeApp.View.prototype.loaderShow = function () {
 traineeApp.View.prototype.loaderHide = function () {
   $("#ajax-loader").hide();
 };
-
 
 /**
  * Vykresleni selectu pro vybrani teamu

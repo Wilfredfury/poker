@@ -12,13 +12,13 @@ var pageSkipped = 0;
  *
  * @param cb - (users, teamUsers) callback pro ulozeni uzivatelu
  */
-exports.getUsers = function(cb) {
+exports.getUsers = function(cb, cbResponse) {
   url = buildUrl(["Users"], ["isActive eq 'true'"], {
     include: "[Id, Email, FirstName, LastName, IsActive, Role]"
   });
   return request(url, function(err, req, data){
     if (!err){
-      return _getTeamUsers(data, cb);      
+      return _getTeamUsers(data, cb, cbResponse);      
     }
     else {
       return err;
@@ -32,13 +32,13 @@ exports.getUsers = function(cb) {
  * @param users - json s informacemi o uzivateli
  * @param cb - (users, teamUsers) callback pro ulozeni uzivatelu
  */
-_getTeamUsers = function(users, cb) {
+_getTeamUsers = function(users, cb, cbResponse) {
   url = buildUrl(["TeamMembers"], null, {
     include: "[Team, User, Role]"
   });
   return request(url, function(err, req, data){
     if (!err){
-      return cb(users, data);      
+      return cb(users, data, cbResponse);      
     }
     else {
       return err;

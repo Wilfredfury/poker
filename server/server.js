@@ -12,8 +12,6 @@ exports.addUser = function(req, selectedTeamId, oUser) {
   var selectedTeam = oUser.teams[selectedTeamId];
   var selectedRole = oUser.roles[selectedTeamId];
 
-
-
   if (!exports.usersList[selectedTeam]) {
     exports.usersList[selectedTeam] = {};
   }
@@ -34,10 +32,14 @@ exports.getUser = function(email) {
   for (var key in exports.usersList) {
     for (var inKey in exports.usersList[key]) {
       if (inKey == email) {
-        var user = exports.usersList[key][inKey];
-        user.team = key;
-        user.email = inKey;
-        delete user.socket;
+        var usLi = exports.usersList[key][inKey]; // zkratka
+        var user = {
+            name : usLi.name,    
+            role : usLi.role,
+            teamId : usLi.teamId,
+            team : key,
+            email : inKey
+        };
         return user;
       }
     }
@@ -53,6 +55,10 @@ exports.getUser = function(email) {
 exports.removeUser = function(team, email) {
   if (exports.usersList[team]) {
     delete exports.usersList[team][email];
+    console.log(exports.usersList[team]);
+    if (exports.usersList[team].length === 0){
+      delete exports.usersList[team];
+    }
   }
 };
 
