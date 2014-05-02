@@ -3,13 +3,16 @@
  */
 exports.usersList = {}; // uklada info o "prihlasenych" uzivatelich (otevrene sockety).
 exports.usList = {}; // uklada info o aktivnich US pro hlasovani.
+
 /**
  * vlozeni noveho uzivatele do seznamu prihlasenych uzivatelu
  * 
  * @param req - objekt pro komunikaci klienta a serveru 
+ * @param selectedTeamId - id vybraneho tymu pro index v poli z modelu 
+ * @param oUser - objekt uzivatele z modelu 
  */
 exports.addUser = function(req, selectedTeamId, oUser) {
-  var selectedTeam = oUser.teams[selectedTeamId];
+  var selectedTeam = oUser.teams[selectedTeamId]; // podle vybraneho ID vybere roli
   var selectedRole = oUser.roles[selectedTeamId];
 
   if (!exports.usersList[selectedTeam]) {
@@ -21,12 +24,14 @@ exports.addUser = function(req, selectedTeamId, oUser) {
     socket : req,
     teamId : selectedTeamId
   };
+  console.log("LI: " + oUser.name + " " + selectedRole + " " + selectedTeam);
 };
 
 /**
- * odebrani uzivatele ze seznamu prihlasenych uzivatelu
+ * ziskani informaci uzivatele ze serveru
  * 
- * @param user - objekt uzivatele, ktery ma byt odhlasen
+ * @param email - hledany uzivatel
+ * @return user - informace o uzivateli
  */
 exports.getUser = function(email) {
   for (var key in exports.usersList) {
@@ -44,20 +49,21 @@ exports.getUser = function(email) {
       }
     }
   }
-
   return null;
 };
+
 /**
  * odebrani uzivatele ze seznamu prihlasenych uzivatelu
  * 
- * @param user - objekt uzivatele, ktery ma byt odhlasen
+ * @param team - team uzivatele, ktery ma byt odhlasen
+ * @param email - email uzivatele, ktery ma byt odhlasen
  */
 exports.removeUser = function(team, email) {
-  if (exports.usersList[team]) {
+  if (exports.usersList[team] && exports.usersList[team][email]) {
+    console.log("LO: " + exports.usersList[team][email].name + " " + exports.usersList[team][email].role + " " + team);
     delete exports.usersList[team][email];
-    console.log(exports.usersList[team]);
-    if (exports.usersList[team].length === 0){
-      delete exports.usersList[team];
+    if (!Object.getOwnPropertyNames(exports.usersList[team]).length){
+      delete (exports.usersList[team]);
     }
   }
 };
@@ -112,6 +118,7 @@ exports.addUS = function(team, usid) {
     titleID : usid,
     votes : {}
   };
+  console.log("VI: " + team + " " + usid);
 };
 
 /**
@@ -124,6 +131,7 @@ exports.getUS = function(team) {
   if (exports.usList[team]){
     return exports.usList[team].titleID;
   }
+  return null;
 };
 
 /**
@@ -132,7 +140,10 @@ exports.getUS = function(team) {
  * @param team - tym mazane user story
  */
 exports.removeUS = function(team) {
- delete exports.usList[team];
+ if (exports.usList[team]){
+   console.log("VO: " + team + " " + exports.usList[team].titleID);
+   delete exports.usList[team];   
+ }
 };
 
 /**

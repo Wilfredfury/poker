@@ -5,15 +5,25 @@ var model = function() {
   this.users = null;
 };
 
-model.roleTypes = {
+model.roleTypes = { // role
   dev : 'Developer',
   sm : 'Scrum Master'
 };
 
+/**
+ * Setter pro uzivatele
+ * 
+ * @param users - seznam vsech uzivatelu z TP
+ */
 model.prototype.setUsers = function(users) {
   this.users = users;
 };
 
+/**
+ * inicializace modelu a vraceni odpovedi v callbacku
+ * 
+ * @param cbResponse - (), pouze pro informaci
+ */
 model.prototype.load = function(cbResponse) {
   _this = this;
   tp.getUsers(function(usersTP, teamUsersTP, cbResponse) {
@@ -42,6 +52,13 @@ model.prototype.load = function(cbResponse) {
     cbResponse();
   },cbResponse);
 };
+
+/**
+ * vrati uzivatele podle emailu
+ * 
+ * @param email - email hledaneho uzivatele
+ * @returns User - hledany uzivatel
+ */
 model.prototype.getUser = function (email) {
   for (var key in this.users) {
     if (this.users[key].email === email) {
@@ -49,21 +66,6 @@ model.prototype.getUser = function (email) {
     }
   }
 };
-
-/**
- * vrati roli uzivatele podle mailu(bran jako ID)
- * 
- * @param email
- *          mail uzivatele
- * @returns string - role uzivatele
- */
-//model.prototype.getRole = function (email) {
-//  for (var key in this.users) {
-//    if (this.users[key].email === email) {
-//      return this.users[key].role;
-//    }
-//  }
-//};
 
 /**
  * vrati vsechny user stories teamu
@@ -127,7 +129,6 @@ model.prototype.getUS = function(usID, cb) {
   });
 };
 
-
 /**
  * vrati vsechny cleny daneho tymu
  * 
@@ -155,9 +156,6 @@ model.prototype.sendVoteTP = function(usID, value, cb){
   tp.setUserStoryEffort(usID, value, function(response){
     return cb(response);
   });
-};
-
-model.prototype.init = function(){
 };
 
 exports.model = model;

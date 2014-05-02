@@ -88,18 +88,19 @@ traineeApp.View.prototype.usList = function (us) {
   var maxShowLength = traineeApp.View.maximalDescriptionShowLength;
   this.contentEl.empty();
   this.contentEl.append('<button class="button" id="USListBtn">request&nbsp;us</button><button class="button" id="UpdateUsers">update&nbsp;users</button>' + '<table id="USList" class="table"><thead><tr><th>user&nbsp;story</th><th>title</th><th>type</th><th>description</th><th></th></tr></thead></table>');
-  for (var key in us) {
-    var desc = us[key].description; // predzpracovani popisu
-    desc = ($(desc).text());
-    if (desc) {
-      if (desc.length > maxShowLength) {
-        desc = desc.substr(0, maxShowLength - 3) + '...'; // -3 za '...'
+  if (us && us != {}){
+    for (var key in us) {
+      var desc = us[key].description; // predzpracovani popisu
+      desc = ($(desc).text());
+      if (desc) {
+        if (desc.length > maxShowLength) {
+          desc = desc.substr(0, maxShowLength - 3) + '...'; // -3 za '...'
+        }
       }
-    }
-    $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
+      $('#USList').append('<tr><td>' + us[key].titleID + '</td><td>' + us[key].title + '</td><td>' + us[key].type + '</td><td>' + desc + '</td><td><button class="USbtn" value="' + us[key].titleID + '">select</button></td></tr>');
+    }   
   }
 };
-
 
 /**
  * zahajeni hlasovani pro programatory
@@ -187,4 +188,3 @@ traineeApp.View.prototype.choiceTeam = function (teams) {
   select += '</select>';
   this.contentEl.append(select + '<br /><button id="choiceTeamBtn" class="button">Submit</button>');
 };
-

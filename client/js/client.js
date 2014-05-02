@@ -147,7 +147,6 @@ traineeApp.Core.prototype.initSM = function () {
   // zaslani usListu SM
   this.io.on('usList-response', function (data) {
     _this.view.loaderHide();
-//    _this.view.flashMsg("flashMsg", "User stories updated!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
     _this.view.usList(data);
     _this.initUSListButtons();
   });
@@ -185,7 +184,6 @@ traineeApp.Core.prototype.initLogoutButton = function () {
   });
 };
 
-
 /**
  * inicializace tlacitek pro vyber user story scrummasterem
  */
@@ -194,6 +192,7 @@ traineeApp.Core.prototype.initUSListButtons = function () {
   $('#USListBtn').click(function () {
     _this.view.loaderShow();
     _this.io.emit('usList-request', _this.user.email);
+    _this.view.flashMsg("flashMsg", "User stories updated!", traineeApp.View.messageTypes.success, _this.timeToHideFlash);
   });
 
   $('#UpdateUsers').click(function () {

@@ -11,7 +11,7 @@ traineeApp.User = function(user) {
   this.name = user.name;
 };
 
-traineeApp.User.roleTypes = {
+traineeApp.User.roleTypes = { // role
   dev : 'Developer',
   sm : 'Scrum Master'
 };

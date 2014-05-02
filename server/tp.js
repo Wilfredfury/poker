@@ -1,12 +1,10 @@
 request = require('request');
-// https://socialbakers.tpondemand.com/api/v1/Authentication
-var token = "MTo5ODYzMkNFOEU3QjMyRDI5RDQzMjBDNjk0M0EyNEJCRg==";
-// pocet najednou branych uzivatelu
-var pageTaken = 1000;
-//pocet prvnich preskakovanych vysledku  
-var pageSkipped = 0;
-// role_dev = 1;
-// role_smaster = 7;
+
+var token = "MTo5ODYzMkNFOEU3QjMyRDI5RDQzMjBDNjk0M0EyNEJCRg=="; // https://socialbakers.tpondemand.com/api/v1/Authentication
+var pageTaken = 1000; // pocet najednou branych uzivatelu
+var pageSkipped = 0; //pocet prvnich preskakovanych vysledku  
+//TP Ids role_dev = 1; role_smaster = 7;
+
 /**
  * ziskej vsechny uzivatele bez informace o jejich tymu a posli getTeamUsers
  *
@@ -72,6 +70,7 @@ exports.getAllTeamUS = function(teamName, cb) {
 
 /**
  * ziska nezpracovanou user story podle ID a vrati do callbacku
+ * 
  * @param titleID - ID hledane user story pro vyber hlasovani
  * @param cb - callback pro predani nezpracovane user story
  */
@@ -94,6 +93,7 @@ exports.getUS = function(titleID, cb) {
 };
 /**
  * ziskani user story role ID a poslani funkci setEffort pro nastaveni Effortu
+ * 
  * @param userStoryId - ID hledane user story
  * @param effort - chtena zmena effortu na TP
  * @param cb - callback funkce ktere se preda vysledek
@@ -117,6 +117,7 @@ exports.setUserStoryEffort = function(userStoryId, effort, cb) {
 };
 /**
  * callback z setUserStoryEffort ktery zmeni effort na TP
+ * 
  * @param effort - effort user story k nastaveni na TP
  * @param roleEffortId -   
  */
