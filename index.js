@@ -178,4 +178,4 @@ app.io.route('endVote-request', function (req) {
   }
 });
 
-app.listen(4987); // spusteni aplikace na portu 4987
+app.listen(process.env.PORT || 4987); // spusteni aplikace na portu 4987
